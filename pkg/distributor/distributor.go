@@ -5,12 +5,9 @@ import (
 	"flag"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/go-kit/log/level"
-	"github.com/prometheus/prometheus/model/labels"
-
 	"github.com/grafana/dskit/limiter"
 	"github.com/grafana/dskit/ring"
 	ring_client "github.com/grafana/dskit/ring/client"
@@ -399,18 +396,22 @@ func (d *Distributor) shardStream(stream logproto.Stream, userID string) ([]uint
 		level.Info(util_log.Logger).Log("msg", "sharding request", "stream", stream.Labels)
 	}
 
-	streamLabels := labelTemplate(stream.Labels)
-	streamPattern := streamLabels.String()
+	baseLbls, err := syntax.ParseLabels(stream.Labels)
+	if err != nil {
+		level.Error(util_log.Logger).Log("msg", "couldn't extract labels from stream", "stream", stream.Labels)
+		return nil, nil
+	}
+	labels := baseLbls.String()
 
 	derivedKeys := make([]uint32, 0, shardCount)
 	derivedStreams := make([]streamTracker, 0, shardCount)
 	for i := 0; i < shardCount; i++ {
-		shard, ok := d.createShard(stream, streamLabels, streamPattern, shardCount, i)
+		shard, ok := d.createShard(stream, shardCount, i)
 		if !ok {
 			continue
 		}
 
-		derivedKeys = append(derivedKeys, util.TokenFor(userID, shard.Labels))
+		derivedKeys = append(derivedKeys, util.TokenFor(userID, labels+strconv.Itoa(i)))
 		derivedStreams = append(derivedStreams, streamTracker{stream: shard})
 
 		if d.cfg.ShardStreams.LoggingEnabled {
@@ -421,35 +422,15 @@ func (d *Distributor) shardStream(stream logproto.Stream, userID string) ([]uint
 	return derivedKeys, derivedStreams
 }
 
-// labelTemplate returns a label set that includes the dummy label to be replaced
-// To avoid allocations, this slice is reused when we know the stream value
-func labelTemplate(lbls string) labels.Labels {
-	baseLbls, err := syntax.ParseLabels(lbls)
-	if err != nil {
-		level.Error(util_log.Logger).Log("msg", "couldn't extract labels from stream", "stream", lbls)
-		return nil
-	}
-
-	streamLabels := make([]labels.Label, len(baseLbls)+1)
-	for i := 0; i < len(baseLbls); i++ {
-		streamLabels[i] = baseLbls[i]
-	}
-	streamLabels[len(baseLbls)] = labels.Label{Name: ShardLbName, Value: ShardLbPlaceholder}
-
-	return streamLabels
-}
-
-func (d *Distributor) createShard(stream logproto.Stream, lbls labels.Labels, streamPattern string, totalShards, shardNumber int) (logproto.Stream, bool) {
+func (d *Distributor) createShard(stream logproto.Stream, totalShards, shardNumber int) (logproto.Stream, bool) {
 	lowerBound, upperBound, ok := d.boundsFor(stream, totalShards, shardNumber)
 	if !ok {
 		return logproto.Stream{}, false
 	}
 
-	shardLabel := strconv.Itoa(shardNumber)
-	lbls[len(lbls)-1] = labels.Label{Name: ShardLbName, Value: shardLabel}
 	return logproto.Stream{
-		Labels:  strings.Replace(streamPattern, ShardLbPlaceholder, shardLabel, 1),
-		Hash:    lbls.Hash(),
+		Labels:  stream.Labels,
+		Hash:    stream.Hash,
 		Entries: stream.Entries[lowerBound:upperBound],
 	}, true
 }

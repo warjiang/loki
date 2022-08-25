@@ -20,7 +20,6 @@ import (
 	"github.com/grafana/dskit/services"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
-	"github.com/prometheus/prometheus/model/labels"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/weaveworks/common/httpgrpc"
@@ -395,13 +394,6 @@ func TestStreamShard(t *testing.T) {
 		}
 		return entries
 	}
-	generateShardLabels := func(baseLabels string, idx int) labels.Labels {
-		// append a shard label to the given labels. The shard value will be 'idx'.
-		lbs, err := syntax.ParseLabels(baseLabels)
-		require.NoError(t, err)
-		lbs = append(lbs, labels.Label{Name: ShardLbName, Value: fmt.Sprintf("%d", idx)})
-		return lbs
-	}
 
 	totalEntries := generateEntries(100)
 
@@ -410,12 +402,14 @@ func TestStreamShard(t *testing.T) {
 		entries           []logproto.Entry
 		shards            int // stub call to ShardCountFor.
 		wantDerivedStream []streamTracker
+		wantDerivedKeys   []uint32
 	}{
 		{
 			name:              "one shard with no entries",
 			entries:           nil,
 			shards:            1,
 			wantDerivedStream: []streamTracker{{stream: baseStream}},
+			wantDerivedKeys:   []uint32{0x544903},
 		},
 		{
 			name:    "one shard with one entry",
@@ -430,6 +424,7 @@ func TestStreamShard(t *testing.T) {
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x544903},
 		},
 		{
 			name:    "two shards with 3 entries",
@@ -439,18 +434,19 @@ func TestStreamShard(t *testing.T) {
 				{ // shard 1.
 					stream: logproto.Stream{
 						Entries: totalEntries[0:1],
-						Labels:  generateShardLabels(baseLabels, 0).String(),
-						Hash:    generateShardLabels(baseLabels, 0).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				}, // shard 2.
 				{
 					stream: logproto.Stream{
 						Entries: totalEntries[1:3],
-						Labels:  generateShardLabels(baseLabels, 1).String(),
-						Hash:    generateShardLabels(baseLabels, 1).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x87aeef89, 0x87aeef88},
 		},
 		{
 			name:    "two shards with 5 entries",
@@ -460,18 +456,19 @@ func TestStreamShard(t *testing.T) {
 				{ // shard 1.
 					stream: logproto.Stream{
 						Entries: totalEntries[0:2],
-						Labels:  generateShardLabels(baseLabels, 0).String(),
-						Hash:    generateShardLabels(baseLabels, 0).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				}, // shard 2.
 				{
 					stream: logproto.Stream{
 						Entries: totalEntries[2:5],
-						Labels:  generateShardLabels(baseLabels, 1).String(),
-						Hash:    generateShardLabels(baseLabels, 1).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x87aeef89, 0x87aeef88},
 		},
 		{
 			name:    "one shard with 20 entries",
@@ -486,6 +483,7 @@ func TestStreamShard(t *testing.T) {
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x544903},
 		},
 		{
 			name:    "two shards with 20 entries",
@@ -495,18 +493,19 @@ func TestStreamShard(t *testing.T) {
 				{ // shard 1.
 					stream: logproto.Stream{
 						Entries: totalEntries[0:10],
-						Labels:  generateShardLabels(baseLabels, 0).String(),
-						Hash:    generateShardLabels(baseLabels, 0).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				}, // shard 2.
 				{
 					stream: logproto.Stream{
 						Entries: totalEntries[10:20],
-						Labels:  generateShardLabels(baseLabels, 1).String(),
-						Hash:    generateShardLabels(baseLabels, 1).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x87aeef89, 0x87aeef88},
 		},
 		{
 			name:    "four shards with 20 entries",
@@ -516,32 +515,33 @@ func TestStreamShard(t *testing.T) {
 				{ // shard 1.
 					stream: logproto.Stream{
 						Entries: totalEntries[0:5],
-						Labels:  generateShardLabels(baseLabels, 0).String(),
-						Hash:    generateShardLabels(baseLabels, 0).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 				{ // shard 2.
 					stream: logproto.Stream{
 						Entries: totalEntries[5:10],
-						Labels:  generateShardLabels(baseLabels, 1).String(),
-						Hash:    generateShardLabels(baseLabels, 1).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 				{ // shard 3.
 					stream: logproto.Stream{
 						Entries: totalEntries[10:15],
-						Labels:  generateShardLabels(baseLabels, 2).String(),
-						Hash:    generateShardLabels(baseLabels, 2).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 				{ // shard 4.
 					stream: logproto.Stream{
 						Entries: totalEntries[15:20],
-						Labels:  generateShardLabels(baseLabels, 3).String(),
-						Hash:    generateShardLabels(baseLabels, 3).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x87aeef89, 0x87aeef88, 0x87aeef8b, 0x87aeef8a},
 		},
 		{
 			name:    "four shards with 2 entries",
@@ -551,32 +551,33 @@ func TestStreamShard(t *testing.T) {
 				{
 					stream: logproto.Stream{
 						Entries: []logproto.Entry{},
-						Labels:  generateShardLabels(baseLabels, 0).String(),
-						Hash:    generateShardLabels(baseLabels, 0).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 				{
 					stream: logproto.Stream{
 						Entries: totalEntries[0:1],
-						Labels:  generateShardLabels(baseLabels, 1).String(),
-						Hash:    generateShardLabels(baseLabels, 1).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 				{
 					stream: logproto.Stream{
 						Entries: []logproto.Entry{},
-						Labels:  generateShardLabels(baseLabels, 2).String(),
-						Hash:    generateShardLabels(baseLabels, 2).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 				{
 					stream: logproto.Stream{
 						Entries: totalEntries[1:2],
-						Labels:  generateShardLabels(baseLabels, 3).String(),
-						Hash:    generateShardLabels(baseLabels, 3).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x87aeef89, 0x87aeef88, 0x87aeef8b, 0x87aeef8a},
 		},
 		{
 			name:    "four shards with 1 entry",
@@ -585,33 +586,34 @@ func TestStreamShard(t *testing.T) {
 			wantDerivedStream: []streamTracker{
 				{
 					stream: logproto.Stream{
-						Labels:  generateShardLabels(baseLabels, 0).String(),
-						Hash:    generateShardLabels(baseLabels, 0).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 						Entries: []logproto.Entry{},
 					},
 				},
 				{
 					stream: logproto.Stream{
-						Labels:  generateShardLabels(baseLabels, 1).String(),
-						Hash:    generateShardLabels(baseLabels, 1).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 						Entries: []logproto.Entry{},
 					},
 				},
 				{
 					stream: logproto.Stream{
-						Labels:  generateShardLabels(baseLabels, 2).String(),
-						Hash:    generateShardLabels(baseLabels, 2).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 						Entries: []logproto.Entry{},
 					},
 				},
 				{
 					stream: logproto.Stream{
 						Entries: totalEntries[0:1],
-						Labels:  generateShardLabels(baseLabels, 3).String(),
-						Hash:    generateShardLabels(baseLabels, 3).Hash(),
+						Labels:  baseStream.Labels,
+						Hash:    baseStream.Hash,
 					},
 				},
 			},
+			wantDerivedKeys: []uint32{0x87aeef89, 0x87aeef88, 0x87aeef8b, 0x87aeef8a},
 		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -620,9 +622,10 @@ func TestStreamShard(t *testing.T) {
 			}
 			baseStream.Entries = tc.entries
 
-			_, derivedStreams := d.shardStream(baseStream, "fake")
+			derivedKeys, derivedStreams := d.shardStream(baseStream, "fake")
 
 			require.Equal(t, tc.wantDerivedStream, derivedStreams)
+			require.Equal(t, tc.wantDerivedKeys, derivedKeys)
 		})
 	}
 }
