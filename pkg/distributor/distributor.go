@@ -396,13 +396,6 @@ func (d *Distributor) shardStream(stream logproto.Stream, userID string) ([]uint
 		level.Info(util_log.Logger).Log("msg", "sharding request", "stream", stream.Labels)
 	}
 
-	baseLbls, err := syntax.ParseLabels(stream.Labels)
-	if err != nil {
-		level.Error(util_log.Logger).Log("msg", "couldn't extract labels from stream", "stream", stream.Labels)
-		return nil, nil
-	}
-	labels := baseLbls.String()
-
 	derivedKeys := make([]uint32, 0, shardCount)
 	derivedStreams := make([]streamTracker, 0, shardCount)
 	for i := 0; i < shardCount; i++ {
@@ -411,7 +404,7 @@ func (d *Distributor) shardStream(stream logproto.Stream, userID string) ([]uint
 			continue
 		}
 
-		derivedKeys = append(derivedKeys, util.TokenFor(userID, labels+strconv.Itoa(i)))
+		derivedKeys = append(derivedKeys, util.TokenFor(userID, stream.Labels+strconv.Itoa(i)))
 		derivedStreams = append(derivedStreams, streamTracker{stream: shard})
 
 		if d.cfg.ShardStreams.LoggingEnabled {
