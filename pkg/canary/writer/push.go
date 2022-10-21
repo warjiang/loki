@@ -162,8 +162,7 @@ func (p *Push) parsePayload(payload []byte) (*logproto.PushRequest, error) {
 // It won't batch.
 func (p *Push) send(ctx context.Context, payload []byte) error {
 	var (
-		resp *http.Response
-		err  error
+		err error
 	)
 
 	preq, err := p.parsePayload(payload)
@@ -200,27 +199,14 @@ func (p *Push) send(ctx context.Context, payload []byte) error {
 
 	// send log with retry
 	for {
-		resp, err = p.httpClient.Do(req)
-		if err != nil {
-			return fmt.Errorf("failed to push payload: %w", err)
-		}
-		status := resp.StatusCode
-
-		if status/100 != 2 {
-			scanner := bufio.NewScanner(io.LimitReader(resp.Body, defaultMaxReponseBufferLen))
-			line := ""
-			if scanner.Scan() {
-				line = scanner.Text()
-			}
-			err = fmt.Errorf("server returned HTTP status %s (%d): %s", resp.Status, status, line)
-
-		}
-
-		if err := resp.Body.Close(); err != nil {
-			level.Error(p.logger).Log("msg", "failed to close response body", "error", err)
+		status := 0
+		status, err = p._send(req)
+		if err == nil {
+			break
 		}
 
 		if status > 0 && status != 429 && status/100 != 5 {
+			level.Info(p.logger).Log("msg", "server rejected push with a non-retryable status code", "status", status, "err", err)
 			break
 		}
 
@@ -233,4 +219,30 @@ func (p *Push) send(ctx context.Context, payload []byte) error {
 	}
 
 	return err
+}
+
+func (p *Push) _send(req *http.Request) (int, error) {
+	var (
+		err  error
+		resp *http.Response
+	)
+	resp, err = p.httpClient.Do(req)
+	if err != nil {
+		return -1, fmt.Errorf("failed to push payload: %w", err)
+	}
+	status := resp.StatusCode
+	if status/100 != 2 {
+		scanner := bufio.NewScanner(io.LimitReader(resp.Body, defaultMaxReponseBufferLen))
+		line := ""
+		if scanner.Scan() {
+			line = scanner.Text()
+		}
+		err = fmt.Errorf("server returned HTTP status %s (%d): %s", resp.Status, status, line)
+	}
+
+	if err := resp.Body.Close(); err != nil {
+		level.Error(p.logger).Log("msg", "failed to close response body", "error", err)
+	}
+
+	return status, err
 }
