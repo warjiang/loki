@@ -12,6 +12,7 @@ type ratestoreMetrics struct {
 	maxStreamShardCount prometheus.Gauge
 	maxStreamRate       prometheus.Gauge
 	maxUniqueStreamRate prometheus.Gauge
+	uniqueStreamRates   prometheus.Histogram
 	refreshDuration     *instrument.HistogramCollector
 }
 
@@ -52,5 +53,11 @@ func newRateStoreMetrics(reg prometheus.Registerer) *ratestoreMetrics {
 				}, instrument.HistogramCollectorBuckets,
 			),
 		),
+		uniqueStreamRates: promauto.With(reg).NewHistogram(prometheus.HistogramOpts{
+			Namespace: "loki",
+			Name:      "rate_store_unique_stream_rate_bytes",
+			Help:      "The distribution of unique streams. Sharded streams are not aggregated",
+			Buckets:   prometheus.ExponentialBucketsRange(10000, 10000000, 20),
+		}),
 	}
 }

@@ -126,6 +126,7 @@ func (s *rateStore) aggregateByShard(streamRates map[uint64]*logproto.StreamRate
 	rates := make(map[uint64]int64)
 	for _, sr := range streamRates {
 		shardCount[sr.StreamHashNoShard]++
+		s.metrics.uniqueStreamRates.Observe(float64(sr.Rate))
 
 		if _, ok := rates[sr.StreamHashNoShard]; ok {
 			rates[sr.StreamHashNoShard] += sr.Rate
