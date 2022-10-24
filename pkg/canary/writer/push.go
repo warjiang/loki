@@ -206,14 +206,14 @@ func (p *Push) send(ctx context.Context, payload []byte) error {
 		}
 
 		if status > 0 && status != 429 && status/100 != 5 {
-			level.Info(p.logger).Log("msg", "server rejected push with a non-retryable status code", "status", status, "err", err)
+			level.Error(p.logger).Log("msg", "server rejected push with a non-retryable status code", "status", status, "err", err)
 			break
 		}
 
 		if !backoff.Ongoing() {
 			break
 		}
-		level.Info(p.logger).Log("msg", "retrying as server returned non successful error", "status", status, "error", err)
+		level.Warn(p.logger).Log("msg", "retrying as server returned non successful error", "status", status, "error", err)
 		backoff.Wait()
 	}
 

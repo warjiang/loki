@@ -97,7 +97,7 @@ func (w *Writer) run() {
 
 			_, err := fmt.Fprintf(w.w, LogEntry, ts, w.pad)
 			if err != nil {
-				level.Error(w.logger).Log("msg", "failed to write log entry", "error", err)
+				level.Error(w.logger).Log("msg", "failed to write log entry", "entry", ts, "error", err)
 			}
 			w.sent <- t
 		case <-w.quit:
