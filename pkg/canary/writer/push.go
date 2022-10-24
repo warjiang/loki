@@ -213,9 +213,8 @@ func (p *Push) send(ctx context.Context, payload []byte) error {
 		if !backoff.Ongoing() {
 			break
 		}
-
 		level.Info(p.logger).Log("msg", "retrying as server returned non successful error", "status", status, "error", err)
-
+		backoff.Wait()
 	}
 
 	return err

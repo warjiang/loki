@@ -161,7 +161,7 @@ func main() {
 				*caFile,
 				*user, *pass,
 				&backoffCfg,
-				log.NewLogfmtLogger(os.Stdout),
+				log.NewLogfmtLogger(os.Stderr),
 			)
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "Unable to create writer for Loki, check config: %s", err)
