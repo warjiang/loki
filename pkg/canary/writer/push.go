@@ -115,9 +115,7 @@ func NewPush(
 
 // Write implements the io.Writer.
 func (p *Push) Write(payload []byte) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), p.httpClient.Timeout)
-	defer cancel()
-	if err := p.send(ctx, payload); err != nil {
+	if err := p.send(payload); err != nil {
 		return 0, err
 	}
 	return len(payload), nil
@@ -160,7 +158,7 @@ func (p *Push) parsePayload(payload []byte) (*logproto.PushRequest, error) {
 
 // send does the heavy lifting of sending the generated logs into the Loki server.
 // It won't batch.
-func (p *Push) send(ctx context.Context, payload []byte) error {
+func (p *Push) send(payload []byte) error {
 	var (
 		err error
 	)
@@ -181,7 +179,6 @@ func (p *Push) send(ctx context.Context, payload []byte) error {
 	if err != nil {
 		return fmt.Errorf("failed to create push request: %w", err)
 	}
-	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", p.contentType)
 	req.Header.Set("User-Agent", p.userAgent)
 
@@ -195,7 +192,8 @@ func (p *Push) send(ctx context.Context, payload []byte) error {
 		req.SetBasicAuth(p.username, p.password)
 	}
 
-	backoff := backoff.New(ctx, *p.backoff)
+	// We will use a timeout within each attempt to send
+	backoff := backoff.New(context.Background(), *p.backoff)
 
 	// send log with retry
 	for {
@@ -225,6 +223,10 @@ func (p *Push) _send(req *http.Request) (int, error) {
 		err  error
 		resp *http.Response
 	)
+	// Set a timeout for the request
+	ctx, cancel := context.WithTimeout(context.Background(), p.httpClient.Timeout)
+	defer cancel()
+	req = req.WithContext(ctx)
 	resp, err = p.httpClient.Do(req)
 	if err != nil {
 		return -1, fmt.Errorf("failed to push payload: %w", err)
