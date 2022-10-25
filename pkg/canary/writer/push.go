@@ -175,30 +175,13 @@ func (p *Push) send(payload []byte) error {
 
 	payload = snappy.Encode(nil, payload)
 
-	req, err := http.NewRequest("POST", p.lokiURL, bytes.NewReader(payload))
-	if err != nil {
-		return fmt.Errorf("failed to create push request: %w", err)
-	}
-	req.Header.Set("Content-Type", p.contentType)
-	req.Header.Set("User-Agent", p.userAgent)
-
-	// set org-id
-	if p.tenantID != "" {
-		req.Header.Set("X-Scope-OrgID", p.tenantID)
-	}
-
-	// basic auth if provided
-	if p.username != "" {
-		req.SetBasicAuth(p.username, p.password)
-	}
-
 	// We will use a timeout within each attempt to send
 	backoff := backoff.New(context.Background(), *p.backoff)
 
 	// send log with retry
 	for {
 		status := 0
-		status, err = p._send(req)
+		status, err = p._send(payload)
 		if err == nil {
 			break
 		}
@@ -218,15 +201,32 @@ func (p *Push) send(payload []byte) error {
 	return err
 }
 
-func (p *Push) _send(req *http.Request) (int, error) {
+func (p *Push) _send(payload []byte) (int, error) {
 	var (
 		err  error
 		resp *http.Response
 	)
+	req, err := http.NewRequest("POST", p.lokiURL, bytes.NewReader(payload))
+	if err != nil {
+		return -1, fmt.Errorf("failed to create push request: %w", err)
+	}
+	req.Header.Set("Content-Type", p.contentType)
+	req.Header.Set("User-Agent", p.userAgent)
+
+	// set org-id
+	if p.tenantID != "" {
+		req.Header.Set("X-Scope-OrgID", p.tenantID)
+	}
+
+	// basic auth if provided
+	if p.username != "" {
+		req.SetBasicAuth(p.username, p.password)
+	}
 	// Set a timeout for the request
 	ctx, cancel := context.WithTimeout(context.Background(), p.httpClient.Timeout)
 	defer cancel()
 	req = req.WithContext(ctx)
+
 	resp, err = p.httpClient.Do(req)
 	if err != nil {
 		return -1, fmt.Errorf("failed to push payload: %w", err)
