@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"math"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -103,6 +102,8 @@ type Distributor struct {
 	ingesterAppends        *prometheus.CounterVec
 	ingesterAppendFailures *prometheus.CounterVec
 	replicationFactor      prometheus.Gauge
+
+	shardTracker           *ShardTracker
 	streamShardingFailures *prometheus.CounterVec
 	streamShardCount       prometheus.Counter
 }
@@ -174,6 +175,7 @@ func New(
 		ingestionRateLimiter:   limiter.NewRateLimiter(ingestionRateStrategy, 10*time.Second),
 		labelCache:             labelCache,
 		rateLimitStrat:         rateLimitStrat,
+		shardTracker:           NewShardTracker(),
 		ingesterAppends: promauto.With(registerer).NewCounterVec(prometheus.CounterOpts{
 			Namespace: "loki",
 			Name:      "distributor_ingester_appends_total",
@@ -409,13 +411,6 @@ func (d *Distributor) Push(ctx context.Context, req *logproto.PushRequest) (*log
 	}
 }
 
-func min(x1, x2 int) int {
-	if x1 < x2 {
-		return x1
-	}
-	return x2
-}
-
 // shardStream shards (divides) the given stream into N smaller streams, where
 // N is the sharding size for the given stream. shardSteam returns the smaller
 // streams and their associated keys for hashing to ingesters.
@@ -434,56 +429,52 @@ func (d *Distributor) shardStream(stream logproto.Stream, streamSize int, userID
 		return []uint32{util.TokenFor(userID, stream.Labels)}, []streamTracker{{stream: stream}}
 	}
 
+	nextShard := d.shardTracker.LastShardNum(stream.Hash) + 1
+	d.shardTracker.SetLastShardNum(stream.Hash, nextShard%shardCount)
+
+	streamLabels := labelTemplate(stream.Labels)
+	shard := d.createShard(streamLabels, streamLabels.String(), nextShard)
+	shard.Entries = stream.Entries
+
 	d.streamShardCount.Inc()
 	if shardStreamsCfg.LoggingEnabled {
 		level.Info(logger).Log("msg", "sharding request", "shard_count", shardCount)
 	}
 
-	if shardCount > len(stream.Entries) {
-		shardsOrder := d.randomizeShardsOrder(shardCount)
-		return d.divideEntriesBetweenShards(logger, userID, len(stream.Entries), shardStreamsCfg, stream, shardsOrder)
-	}
-
-	return d.divideEntriesBetweenShards(logger, userID, shardCount, shardStreamsCfg, stream, nil)
+	return []uint32{util.TokenFor(userID, shard.Labels)}, []streamTracker{{stream: shard}}
 }
 
-func (d *Distributor) randomizeShardsOrder(shardCount int) []int {
-	shardsOrder := make([]int, shardCount)
-	for i := 0; i < shardCount; i++ {
-		shardsOrder = append(shardsOrder, i)
-	}
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(shardsOrder), func(i, j int) { shardsOrder[i], shardsOrder[j] = shardsOrder[j], shardsOrder[i] })
-	return shardsOrder
-}
-
-func (d *Distributor) divideEntriesBetweenShards(logger log.Logger, userID string, shardCount int, shardStreamsCfg *shardstreams.Config, stream logproto.Stream, alternateShardsOrder []int) ([]uint32, []streamTracker) {
-	derivedKeys := make([]uint32, 0, shardCount)
-	derivedStreams := make([]streamTracker, 0, shardCount)
-	streamLabels := labelTemplate(stream.Labels)
-	streamPattern := streamLabels.String()
-
-	for i := 0; i < shardCount; i++ {
-		j := i
-		if len(alternateShardsOrder) > 0 {
-			j = alternateShardsOrder[i]
-		}
-		shard, ok := d.createShard(shardStreamsCfg, stream, streamLabels, streamPattern, shardCount, i, j)
-		if !ok {
-			level.Error(logger).Log("msg", "couldn't create shard", "idx", i)
-			continue
-		}
-
-		derivedKeys = append(derivedKeys, util.TokenFor(userID, shard.Labels))
-		derivedStreams = append(derivedStreams, streamTracker{stream: shard})
-
-		if shardStreamsCfg.LoggingEnabled {
-			level.Info(util_log.Logger).Log("msg", "stream derived from sharding", "src-stream", stream.Labels, "derived-stream", shard.Labels)
-		}
-	}
-
-	return derivedKeys, derivedStreams
-}
+//func (d *Distributor) divideEntriesBetweenShards(userID string, shardCount int, shardStreamsCfg *shardstreams.Config, stream logproto.Stream) ([]uint32, []streamTracker) {
+//	var (
+//		derivedKeys        = make([]uint32, 0, shardCount)
+//		derivedStreams     = make([]streamTracker, 0, shardCount)
+//		streamLabels       = labelTemplate(stream.Labels)
+//		streamLabelsString = streamLabels.String()
+//	)
+//
+//	lastShard := d.shardTracker.LastShardNum(stream.Hash) + 1
+//	for i := 0; i < shardCount; i++ {
+//		shardID := (lastShard + i) % shardCount
+//		shard := d.createShard(streamLabels, streamLabelsString, shardID)
+//
+//		derivedKeys = append(derivedKeys, util.TokenFor(userID, shard.Labels))
+//		derivedStreams = append(derivedStreams, streamTracker{stream: shard})
+//
+//		if shardStreamsCfg.LoggingEnabled {
+//			level.Info(util_log.Logger).Log("msg", "stream derived from sharding", "src-stream", stream.Labels, "derived-stream", shard.Labels)
+//		}
+//		lastShard = shardID
+//	}
+//	d.shardTracker.SetLastShardNum(stream.Hash, lastShard)
+//
+//	for i, e := range stream.Entries {
+//		shardIdx := i % shardCount
+//		entries := derivedStreams[shardIdx].stream.Entries
+//		derivedStreams[shardIdx].stream.Entries = append(entries, e)
+//	}
+//
+//	return derivedKeys, derivedStreams
+//}
 
 // labelTemplate returns a label set that includes the dummy label to be replaced
 // To avoid allocations, this slice is reused when we know the stream value
@@ -501,36 +492,13 @@ func labelTemplate(lbls string) labels.Labels {
 	return streamLabels
 }
 
-func (d *Distributor) createShard(streamshardCfg *shardstreams.Config, stream logproto.Stream, lbls labels.Labels, streamPattern string, totalShards, spot, shardNumber int) (logproto.Stream, bool) {
-	lowerBound, upperBound, ok := d.boundsFor(stream, totalShards, spot, streamshardCfg.LoggingEnabled)
-	if !ok {
-		return logproto.Stream{}, false
-	}
-
+func (d *Distributor) createShard(lbls labels.Labels, streamPattern string, shardNumber int) logproto.Stream {
 	shardLabel := strconv.Itoa(shardNumber)
 	lbls[len(lbls)-1] = labels.Label{Name: ingester.ShardLbName, Value: shardLabel}
 	return logproto.Stream{
-		Labels:  strings.Replace(streamPattern, ingester.ShardLbPlaceholder, shardLabel, 1),
-		Hash:    lbls.Hash(),
-		Entries: stream.Entries[lowerBound:upperBound],
-	}, true
-}
-
-func (d *Distributor) boundsFor(stream logproto.Stream, totalShards, idx int, loggingEnabled bool) (int, int, bool) {
-	entriesPerWindow := float64(len(stream.Entries)) / float64(totalShards)
-
-	fidx := float64(idx)
-	lowerBound := int(fidx * entriesPerWindow)
-	upperBound := min(int(entriesPerWindow*(1+fidx)), len(stream.Entries))
-
-	if lowerBound > upperBound {
-		if loggingEnabled {
-			level.Warn(util_log.Logger).Log("msg", "sharding with lowerbound > upperbound", "lowerbound", lowerBound, "upperbound", upperBound, "shards", totalShards, "labels", stream.Labels)
-		}
-		return 0, 0, false
+		Labels: strings.Replace(streamPattern, ingester.ShardLbPlaceholder, shardLabel, 1),
+		Hash:   lbls.Hash(),
 	}
-
-	return lowerBound, upperBound, true
 }
 
 // maxT returns the highest between two given timestamps.
@@ -659,14 +627,6 @@ func (d *Distributor) shardCountFor(logger log.Logger, stream *logproto.Stream, 
 
 	rate := d.rateStore.RateFor(stream.Hash)
 	shards := calculateShards(rate, streamSize, streamShardcfg.DesiredRate.Val())
-	if shards > len(stream.Entries) {
-		d.streamShardingFailures.WithLabelValues("too_many_shards").Inc()
-		if streamShardcfg.LoggingEnabled {
-			level.Error(logger).Log("msg", "number of shards bigger than number of entries", "shards", shards, "entries", len(stream.Entries))
-		}
-		return shards
-	}
-
 	if shards == 0 {
 		// 1 shard is enough for the given stream.
 		return 1
@@ -676,7 +636,8 @@ func (d *Distributor) shardCountFor(logger log.Logger, stream *logproto.Stream, 
 }
 
 func calculateShards(rate int64, streamSize, desiredRate int) int {
-	shards := float64(rate+int64(streamSize)) / float64(desiredRate)
+	// TODO: You ignored stream size
+	shards := float64(rate) / float64(desiredRate)
 	if shards <= 1 {
 		return 1
 	}

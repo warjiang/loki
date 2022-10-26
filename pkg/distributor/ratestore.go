@@ -54,8 +54,8 @@ type rateStore struct {
 	ingesterTimeout time.Duration
 	maxParallelism  int
 	limits          Limits
-
-	metrics *ratestoreMetrics
+	updateNumber    int
+	metrics         *ratestoreMetrics
 }
 
 func NewRateStore(cfg RateStoreConfig, r ring.ReadRing, cf poolClientFactory, l Limits, registerer prometheus.Registerer) *rateStore { //nolint
@@ -77,9 +77,9 @@ func NewRateStore(cfg RateStoreConfig, r ring.ReadRing, cf poolClientFactory, l 
 }
 
 func (s *rateStore) instrumentedUpdateAllRates(ctx context.Context) error {
-	if !s.anyShardingEnabled() {
-		return nil
-	}
+	//if !s.anyShardingEnabled() {
+	//	return nil
+	//}
 
 	return instrument.CollectedRequest(ctx, "GetAllStreamRates", s.metrics.refreshDuration, instrument.ErrorCode, s.updateAllRates)
 }
@@ -99,7 +99,15 @@ func (s *rateStore) updateAllRates(ctx context.Context) error {
 
 	s.rateLock.Lock()
 	defer s.rateLock.Unlock()
-	s.rates = rates
+	// TODO, update the rates every second but keep everything around for awhile. (This looks like a cache with an TTL)
+	if s.updateNumber == 0 {
+		s.rates = rates
+	} else {
+		for k, v := range rates {
+			s.rates[k] = v
+		}
+	}
+	s.updateNumber = (s.updateNumber + 1) % 5
 
 	return nil
 }
@@ -126,7 +134,6 @@ func (s *rateStore) aggregateByShard(streamRates map[uint64]*logproto.StreamRate
 	rates := make(map[uint64]int64)
 	for _, sr := range streamRates {
 		shardCount[sr.StreamHashNoShard]++
-		s.metrics.uniqueStreamRates.Observe(float64(sr.Rate))
 
 		if _, ok := rates[sr.StreamHashNoShard]; ok {
 			rates[sr.StreamHashNoShard] += sr.Rate
@@ -139,11 +146,17 @@ func (s *rateStore) aggregateByShard(streamRates map[uint64]*logproto.StreamRate
 		maxRate = max(rates[sr.StreamHashNoShard], maxRate)
 	}
 
+	var numSharded int
 	var maxShards int64
 	for _, v := range shardCount {
+		if v > 1 {
+			numSharded++
+		}
 		maxShards = max(maxShards, int64(v))
 	}
 
+	//TODO Calculate shards differently
+	s.metrics.shardedStreams.Set(float64(numSharded))
 	s.metrics.maxStreamRate.Set(float64(maxRate))
 	s.metrics.maxStreamShardCount.Set(float64(maxShards))
 	return rates
@@ -209,6 +222,10 @@ func (s *rateStore) ratesPerStream(responses chan *logproto.StreamRatesResponse,
 
 			streamRates[rate.StreamHash] = rate
 		}
+	}
+
+	for _, r := range streamRates {
+		s.metrics.uniqueStreamRates.Observe(float64(r.Rate))
 	}
 
 	s.metrics.maxUniqueStreamRate.Set(float64(maxRate))

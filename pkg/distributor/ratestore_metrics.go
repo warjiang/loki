@@ -10,6 +10,7 @@ type ratestoreMetrics struct {
 	rateRefreshFailures *prometheus.CounterVec
 	streamCount         prometheus.Gauge
 	maxStreamShardCount prometheus.Gauge
+	shardedStreams      prometheus.Gauge
 	maxStreamRate       prometheus.Gauge
 	maxUniqueStreamRate prometheus.Gauge
 	uniqueStreamRates   prometheus.Histogram
@@ -58,6 +59,11 @@ func newRateStoreMetrics(reg prometheus.Registerer) *ratestoreMetrics {
 			Name:      "rate_store_unique_stream_rate_bytes",
 			Help:      "The distribution of unique streams. Sharded streams are not aggregated",
 			Buckets:   prometheus.ExponentialBucketsRange(10000, 10000000, 20),
+		}),
+		shardedStreams: promauto.With(reg).NewGauge(prometheus.GaugeOpts{
+			Namespace: "loki",
+			Name:      "rate_store_sharded_streams",
+			Help:      "The the number of streams that are sharded.",
 		}),
 	}
 }
