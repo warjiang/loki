@@ -526,13 +526,13 @@ func (t *Loki) initStore() (_ services.Service, err error) {
 					// however it has to be deserialized to do so, setting the cache validity to some arbitrary amount less than the
 					// IndexCacheValidity guarantees the FIFO cache will expire the object first which can be done without
 					// having to deserialize the object.
-					TTL: t.Cfg.StorageConfig.IndexCacheValidity - 1*time.Minute,
+					TTL: t.Cfg.StorageConfig.IndexCacheValidity - 1*time.Second,
 				},
 			}
 			// Force the retain period to be longer than the IndexCacheValidity used in the store, this guarantees we don't
 			// have query gaps on chunks flushed after an index entry is cached by keeping them retained in the ingester
 			// and queried as part of live data until the cache TTL expires on the index entry.
-			t.Cfg.Ingester.RetainPeriod = t.Cfg.StorageConfig.IndexCacheValidity + 1*time.Minute
+			t.Cfg.Ingester.RetainPeriod = t.Cfg.StorageConfig.IndexCacheValidity + 5*time.Second
 
 			// We do not want ingester to unnecessarily keep downloading files
 			t.Cfg.StorageConfig.BoltDBShipperConfig.Mode = indexshipper.ModeWriteOnly
