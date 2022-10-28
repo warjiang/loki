@@ -450,6 +450,9 @@ func (t *Loki) initIngester() (_ services.Service, err error) {
 	t.Server.HTTP.Methods("POST").Path("/ingester/shutdown").Handler(
 		httpMiddleware.Wrap(http.HandlerFunc(t.Ingester.ShutdownHandler)),
 	)
+	t.Server.HTTP.Methods("GET").Path("/ingester/streams").Handler(
+		httpMiddleware.Wrap(http.HandlerFunc(t.Ingester.StreamSize)),
+	)
 	return t.Ingester, nil
 }
 

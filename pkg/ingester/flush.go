@@ -2,8 +2,10 @@ package ingester
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"sync"
 	"time"
 
@@ -73,6 +75,48 @@ func (i *Ingester) FlushHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+type streamWithSize struct {
+	Labels string
+	Size   int64
+}
+
+// StreamSize returns the streams and their sizes for a tenant
+func (i *Ingester) StreamSize(w http.ResponseWriter, req *http.Request) {
+	tenant := req.URL.Query().Get("tenant")
+	if tenant == "" {
+		_, _ = w.Write([]byte("tenant query param required"))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	inst, ok := i.getInstanceByID(tenant)
+	if !ok {
+		_, _ = w.Write([]byte("No tenant with that id found"))
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	streams := make([]streamWithSize, 0, inst.streams.Len())
+	_ = inst.streams.ForEach(func(s *stream) (bool, error) {
+		size := s.size.Load()
+		streams = append(streams, streamWithSize{s.labelsString, size})
+
+		return true, nil
+	})
+
+	sort.Slice(streams, func(i, j int) bool {
+		return streams[i].Size > streams[j].Size
+	})
+
+	streamBytes, err := json.Marshal(streams)
+	if err != nil {
+		_, _ = w.Write([]byte(fmt.Sprintf("error marshalling response: %s", err)))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	_, _ = w.Write(streamBytes)
+}
+
 type flushOp struct {
 	from      model.Time
 	userID    string
@@ -111,6 +155,13 @@ func (i *Ingester) sweepStream(instance *instance, stream *stream, immediate boo
 	if len(stream.chunks) == 0 {
 		return
 	}
+
+	var streamSize int
+	for _, c := range stream.chunks {
+		streamSize += c.chunk.CompressedSize()
+	}
+
+	stream.size.Store(int64(streamSize))
 
 	lastChunk := stream.chunks[len(stream.chunks)-1]
 	shouldFlush, _ := i.shouldFlushChunk(&lastChunk)

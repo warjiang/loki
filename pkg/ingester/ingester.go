@@ -178,6 +178,7 @@ type Interface interface {
 
 	CheckReady(ctx context.Context) error
 	FlushHandler(w http.ResponseWriter, _ *http.Request)
+	StreamSize(w http.ResponseWriter, req *http.Request)
 	GetOrCreateInstance(instanceID string) (*instance, error)
 	// deprecated
 	LegacyShutdownHandler(w http.ResponseWriter, r *http.Request)

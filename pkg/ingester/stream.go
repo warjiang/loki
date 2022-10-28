@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/weaveworks/common/httpgrpc"
@@ -71,6 +72,8 @@ type stream struct {
 
 	unorderedWrites      bool
 	streamRateCalculator *StreamRateCalculator
+
+	size atomic.Int64
 }
 
 type chunkDesc struct {
