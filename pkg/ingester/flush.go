@@ -258,33 +258,34 @@ func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediat
 	ctx, cancel := context.WithTimeout(ctx, i.cfg.FlushOpTimeout)
 	defer cancel()
 
-	doneChans := make([]chan error, len(chunks))
+	doneChan := make(chan error)
 	for j := range chunks {
-		dc := make(chan error)
-		doneChans = append(doneChans, dc)
 		i.flushChan <- &flushChunk{
 			userID:   userID,
 			fp:       fp,
 			labels:   labels,
 			chunkMtx: chunkMtx,
 			chunk:    chunks[j],
-			done:     dc,
+			done:     doneChan,
 			ctx:      ctx,
 		}
 	}
 
-	var err error
-	for _, c := range doneChans {
-		select {
-		case <-ctx.Done():
-			err = ctx.Err()
-			goto done
-		case err = <-c:
+	var lastErr error
+	returns := 0
+	for err := range doneChan {
+		returns++
+		if err != nil {
+			lastErr = err
+		}
+		if returns >= len(chunks) {
+			break
 		}
 	}
-done:
-	if err != nil {
-		return fmt.Errorf("failed to flush chunks: %w, labels: %s", err, lbs)
+	close(doneChan)
+
+	if lastErr != nil {
+		return fmt.Errorf("failed to flush chunks: %w, labels: %s", lastErr, lbs)
 	}
 
 	return nil
