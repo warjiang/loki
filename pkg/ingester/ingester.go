@@ -389,6 +389,9 @@ func (i *Ingester) setupAutoForget() {
 }
 
 func (i *Ingester) starting(ctx context.Context) error {
+	// FlushQueueWorkers workers must be started before WAL replay
+	// and should be shutdown after the flush queues in stopping().
+	i.initFlushQueueWorkers(i.flushQueueWorkerDone)
 	if i.cfg.WAL.Enabled {
 		start := time.Now()
 
@@ -471,7 +474,6 @@ func (i *Ingester) starting(ctx context.Context) error {
 		i.wal.Start()
 	}
 
-	i.initFlushQueueWorkers(i.flushQueueWorkerDone)
 	i.InitFlushQueues()
 
 	// pass new context to lifecycler, so that it doesn't stop automatically when Ingester's service context is done
