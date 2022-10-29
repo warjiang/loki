@@ -73,6 +73,7 @@ type Config struct {
 	MaxTransferRetries int `yaml:"max_transfer_retries,omitempty"`
 
 	ConcurrentFlushes   int               `yaml:"concurrent_flushes"`
+	FlushQueueWorkers   int               `yaml:"flush_queue_workers"`
 	FlushCheckPeriod    time.Duration     `yaml:"flush_check_period"`
 	FlushOpTimeout      time.Duration     `yaml:"flush_op_timeout"`
 	RetainPeriod        time.Duration     `yaml:"chunk_retain_period"`
@@ -114,6 +115,7 @@ func (cfg *Config) RegisterFlags(f *flag.FlagSet) {
 
 	f.IntVar(&cfg.MaxTransferRetries, "ingester.max-transfer-retries", 0, "Number of times to try and transfer chunks before falling back to flushing. If set to 0 or negative value, transfers are disabled.")
 	f.IntVar(&cfg.ConcurrentFlushes, "ingester.concurrent-flushes", 32, "")
+	f.IntVar(&cfg.FlushQueueWorkers, "ingester.flush-queue-workers", 128, "")
 	f.DurationVar(&cfg.FlushCheckPeriod, "ingester.flush-check-period", 30*time.Second, "")
 	f.DurationVar(&cfg.FlushOpTimeout, "ingester.flush-op-timeout", 10*time.Minute, "")
 	f.DurationVar(&cfg.RetainPeriod, "ingester.chunks-retain-period", 0, "")
@@ -210,8 +212,11 @@ type Ingester struct {
 
 	// One queue per flush thread.  Fingerprint is used to
 	// pick a queue.
-	flushQueues     []*util.PriorityQueue
-	flushQueuesDone sync.WaitGroup
+	flushQueues           []*util.PriorityQueue
+	flushQueuesDone       sync.WaitGroup
+	flushChan             chan *flushChunk
+	flushQueueWorkersDone sync.WaitGroup
+	flushQueueWorkerDone  chan struct{}
 
 	limiter *Limiter
 
@@ -257,6 +262,8 @@ func New(cfg Config, clientConfig client.Config, store ChunkStore, limits *valid
 		periodicConfigs:       store.GetSchemaConfigs(),
 		loopQuit:              make(chan struct{}),
 		flushQueues:           make([]*util.PriorityQueue, cfg.ConcurrentFlushes),
+		flushChan:             make(chan *flushChunk),
+		flushQueueWorkerDone:  make(chan struct{}),
 		tailersQuit:           make(chan struct{}),
 		metrics:               metrics,
 		flushOnShutdownSwitch: &OnceSwitch{},
@@ -464,6 +471,7 @@ func (i *Ingester) starting(ctx context.Context) error {
 		i.wal.Start()
 	}
 
+	i.initFlushQueueWorkers(i.flushQueueWorkerDone)
 	i.InitFlushQueues()
 
 	// pass new context to lifecycler, so that it doesn't stop automatically when Ingester's service context is done
@@ -522,6 +530,9 @@ func (i *Ingester) stopping(_ error) error {
 		flushQueue.Close()
 	}
 	i.flushQueuesDone.Wait()
+
+	close(i.flushQueueWorkerDone)
+	i.flushQueueWorkersDone.Wait()
 
 	i.streamRateCalculator.Stop()
 

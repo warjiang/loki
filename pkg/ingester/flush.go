@@ -50,6 +50,15 @@ func (i *Ingester) InitFlushQueues() {
 	}
 }
 
+// Note: this is called both during the WAL replay (zero or more times)
+// and then after replay as well.
+func (i *Ingester) initFlushQueueWorkers(done chan struct{}) {
+	i.flushQueueWorkersDone.Add(i.cfg.FlushQueueWorkers)
+	for j := 0; j < i.cfg.FlushQueueWorkers; j++ {
+		go i.flushQueueWorkerLoop(done)
+	}
+}
+
 // Flush triggers a flush of all the chunks and closes the flush queues.
 // Called from the Lifecycler as part of the ingester shutdown.
 func (i *Ingester) Flush() {
@@ -115,6 +124,16 @@ func (i *Ingester) StreamSize(w http.ResponseWriter, req *http.Request) {
 	}
 
 	_, _ = w.Write(streamBytes)
+}
+
+type flushChunk struct {
+	userID   string
+	fp       model.Fingerprint
+	labels   labels.Labels
+	chunkMtx *sync.RWMutex
+	chunk    *chunkDesc
+	done     chan error
+	ctx      context.Context
 }
 
 type flushOp struct {
@@ -204,6 +223,23 @@ func (i *Ingester) flushLoop(j int) {
 	}
 }
 
+func (i *Ingester) flushQueueWorkerLoop(done chan struct{}) {
+	defer func() {
+		level.Debug(util_log.Logger).Log("msg", "Ingester.flushQueueWorkerLoop exited")
+		i.flushQueueWorkersDone.Done()
+	}()
+	for {
+		select {
+		case <-done:
+			return
+		case c := <-i.flushChan:
+			err := i.flushChunks(c.ctx, c.fp, c.labels, []*chunkDesc{c.chunk}, c.chunkMtx)
+			c.done <- err
+		}
+	}
+
+}
+
 func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediate bool) error {
 	instance, ok := i.getInstanceByID(userID)
 	if !ok {
@@ -221,9 +257,34 @@ func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediat
 	ctx := user.InjectOrgID(context.Background(), userID)
 	ctx, cancel := context.WithTimeout(ctx, i.cfg.FlushOpTimeout)
 	defer cancel()
-	err := i.flushChunks(ctx, fp, labels, chunks, chunkMtx)
+
+	doneChans := make([]chan error, len(chunks))
+	for j := range chunks {
+		dc := make(chan error)
+		doneChans = append(doneChans, dc)
+		i.flushChan <- &flushChunk{
+			userID:   userID,
+			fp:       fp,
+			labels:   labels,
+			chunkMtx: chunkMtx,
+			chunk:    chunks[j],
+			done:     dc,
+			ctx:      ctx,
+		}
+	}
+
+	var err error
+	for _, c := range doneChans {
+		select {
+		case <-ctx.Done():
+			err = ctx.Err()
+			goto done
+		case err = <-c:
+		}
+	}
+done:
 	if err != nil {
-		return fmt.Errorf("failed to flush chunks: %w, num_chunks: %d, labels: %s", err, len(chunks), lbs)
+		return fmt.Errorf("failed to flush chunks: %w, labels: %s", err, lbs)
 	}
 
 	return nil
