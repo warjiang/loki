@@ -307,6 +307,12 @@ func (i *Ingester) collectChunksToFlush(instance *instance, fp model.Fingerprint
 	var result []*chunkDesc
 	for j := range stream.chunks {
 		shouldFlush, reason := i.shouldFlushChunk(&stream.chunks[j])
+		from, to := stream.chunks[j].chunk.Bounds()
+		if !shouldFlush {
+			level.Info(util_log.Logger).Log("msg", "not flushing chunk", "fp", stream.fp, "position", j, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+		} else {
+			level.Info(util_log.Logger).Log("msg", "flushing chunk", "fp", stream.fp, "position", j, "reason", stream.chunks[j].reason, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+		}
 		if immediate || shouldFlush {
 			// Ensure no more writes happen to this chunk.
 			if !stream.chunks[j].closed {
@@ -357,7 +363,7 @@ func (i *Ingester) removeFlushedChunks(instance *instance, stream *stream, mayRe
 	for j := range stream.chunks {
 		from, to := stream.chunks[j].chunk.Bounds()
 		if stream.chunks[j].flushed.IsZero() {
-			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not flushed", "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from))
+			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not flushed", "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
 		}
 		if now.Sub(stream.chunks[0].flushed) < i.cfg.RetainPeriod {
 			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not met retain period", "flushed", stream.chunks[j].flushed, "retained_time", now.Sub(stream.chunks[0].flushed), "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from))
