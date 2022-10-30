@@ -305,6 +305,7 @@ func (i *Ingester) collectChunksToFlush(instance *instance, fp model.Fingerprint
 	defer stream.chunkMtx.Unlock()
 
 	var result []*chunkDesc
+	level.Info(util_log.Logger).Log("msg", "collecting chunks to flush", "fp", stream.fp, "num_chunks", len(stream.chunks), "labels", stream.labels)
 	for j := range stream.chunks {
 		shouldFlush, reason := i.shouldFlushChunk(&stream.chunks[j])
 		from, to := stream.chunks[j].chunk.Bounds()
