@@ -353,6 +353,16 @@ func (i *Ingester) removeFlushedChunks(instance *instance, stream *stream, mayRe
 	defer stream.chunkMtx.Unlock()
 	prevNumChunks := len(stream.chunks)
 	var subtracted int
+	level.Info(util_log.Logger).Log("msg", "removing chunks", "fp", stream.fp, "stream", stream.labels, "total_chunks", len(stream.chunks))
+	for j := range stream.chunks {
+		from, to := stream.chunks[j].chunk.Bounds()
+		if stream.chunks[j].flushed.IsZero() {
+			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not flushed", "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from))
+		}
+		if now.Sub(stream.chunks[0].flushed) < i.cfg.RetainPeriod {
+			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not met retain period", "flushed", stream.chunks[j].flushed, "retained_time", now.Sub(stream.chunks[0].flushed), "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from))
+		}
+	}
 	for len(stream.chunks) > 0 {
 		if stream.chunks[0].flushed.IsZero() || now.Sub(stream.chunks[0].flushed) < i.cfg.RetainPeriod {
 			break
