@@ -8,6 +8,7 @@ import (
 	"github.com/prometheus/common/model"
 	"go.uber.org/atomic"
 
+	"github.com/grafana/loki/pkg/logql/syntax"
 	util_log "github.com/grafana/loki/pkg/util/log"
 )
 
@@ -60,8 +61,16 @@ func (m *streamsMap) Delete(s *stream) bool {
 
 // LoadOrStoreNew already has lock inside, do NOT call inside WithLock or WithRLock
 func (m *streamsMap) LoadOrStoreNew(key string, newStreamFn func() (*stream, error), postLoadFn func(*stream) error) (*stream, bool, error) {
+	// For consistency, we need to sort labels to make sure we don't create multiple streams for the same labels
+	// TODO is it best to do this in this function or before it's passed in?
+	labels, err := syntax.ParseLabels(key)
+	if err != nil {
+		// TODO not sure this is the best error handling
+		return nil, false, err
+	}
 	level.Info(util_log.Logger).Log("msg", "LoadOrStoreNew called", "key", key, "stack", string(debug.Stack()))
-	return m.loadOrStoreNew(m.streams, key, newStreamFn, postLoadFn)
+	// TODO do we want to use the string or instead the hash?
+	return m.loadOrStoreNew(m.streams, labels.String(), newStreamFn, postLoadFn)
 }
 
 // LoadOrStoreNewByFP already has lock inside, do NOT call inside WithLock or WithRLock
