@@ -259,7 +259,8 @@ func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediat
 	defer cancel()
 
 	doneChan := make(chan error)
-	for j := range chunks {
+	for j := 0; j < len(chunks); j++ {
+		level.Info(util_log.Logger).Log("msg", "dispatching chunk", "user", userID, "fp", fp, "immediate", immediate, "num_chunks", len(chunks), "labels", lbs, "count", j)
 		i.flushChan <- &flushChunk{
 			userID:   userID,
 			fp:       fp,
@@ -272,14 +273,11 @@ func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediat
 	}
 
 	var lastErr error
-	returns := 0
-	for err := range doneChan {
-		returns++
+	for j := 1; j <= len(chunks); j++ {
+		err := <-doneChan
+		level.Info(util_log.Logger).Log("msg", "chunk sent", "user", userID, "fp", fp, "immediate", immediate, "num_chunks", len(chunks), "labels", lbs, "err", err, "count", j)
 		if err != nil {
 			lastErr = err
-		}
-		if returns >= len(chunks) {
-			break
 		}
 	}
 	close(doneChan)
@@ -289,6 +287,7 @@ func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediat
 	}
 
 	return nil
+
 }
 
 func (i *Ingester) collectChunksToFlush(instance *instance, fp model.Fingerprint, immediate bool) ([]*chunkDesc, labels.Labels, *sync.RWMutex) {
