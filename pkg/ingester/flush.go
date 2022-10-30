@@ -182,8 +182,8 @@ func (i *Ingester) sweepStream(instance *instance, stream *stream, immediate boo
 
 	stream.size.Store(int64(streamSize))
 
-	lastChunk := stream.chunks[len(stream.chunks)-1]
-	shouldFlush, _ := i.shouldFlushChunk(&lastChunk)
+	firstChunk := stream.chunks[0]
+	shouldFlush, _ := i.shouldFlushChunk(&firstChunk)
 	if len(stream.chunks) == 1 && !immediate && !shouldFlush {
 		return
 	}
