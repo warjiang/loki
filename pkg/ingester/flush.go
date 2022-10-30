@@ -310,9 +310,9 @@ func (i *Ingester) collectChunksToFlush(instance *instance, fp model.Fingerprint
 		shouldFlush, reason := i.shouldFlushChunk(&stream.chunks[j])
 		from, to := stream.chunks[j].chunk.Bounds()
 		if !shouldFlush {
-			level.Info(util_log.Logger).Log("msg", "not flushing chunk", "stream", stream, "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+			level.Info(util_log.Logger).Log("msg", "not flushing chunk", "stream", fmt.Sprintf("%p", stream), "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
 		} else {
-			level.Info(util_log.Logger).Log("msg", "flushing chunk", "stream", stream, "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "reason", stream.chunks[j].reason, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+			level.Info(util_log.Logger).Log("msg", "flushing chunk", "stream", fmt.Sprintf("%p", stream), "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "reason", stream.chunks[j].reason, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
 		}
 		if immediate || shouldFlush {
 			// Ensure no more writes happen to this chunk.
