@@ -1,10 +1,14 @@
 package ingester
 
 import (
+	"runtime/debug"
 	"sync"
 
+	"github.com/go-kit/log/level"
 	"github.com/prometheus/common/model"
 	"go.uber.org/atomic"
+
+	util_log "github.com/grafana/loki/pkg/util/log"
 )
 
 type streamsMap struct {
@@ -56,6 +60,7 @@ func (m *streamsMap) Delete(s *stream) bool {
 
 // LoadOrStoreNew already has lock inside, do NOT call inside WithLock or WithRLock
 func (m *streamsMap) LoadOrStoreNew(key string, newStreamFn func() (*stream, error), postLoadFn func(*stream) error) (*stream, bool, error) {
+	level.Info(util_log.Logger).Log("msg", "LoadOrStoreNew called", "key", key, "stack", string(debug.Stack()))
 	return m.loadOrStoreNew(m.streams, key, newStreamFn, postLoadFn)
 }
 
