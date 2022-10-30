@@ -259,18 +259,20 @@ func (i *Ingester) flushUserSeries(userID string, fp model.Fingerprint, immediat
 	defer cancel()
 
 	doneChan := make(chan error)
-	for j := 0; j < len(chunks); j++ {
-		level.Info(util_log.Logger).Log("msg", "dispatching chunk", "user", userID, "fp", fp, "immediate", immediate, "num_chunks", len(chunks), "labels", lbs, "count", j)
-		i.flushChan <- &flushChunk{
-			userID:   userID,
-			fp:       fp,
-			labels:   labels,
-			chunkMtx: chunkMtx,
-			chunk:    chunks[j],
-			done:     doneChan,
-			ctx:      ctx,
+	go func() {
+		for j := 0; j < len(chunks); j++ {
+			level.Info(util_log.Logger).Log("msg", "dispatching chunk", "user", userID, "fp", fp, "immediate", immediate, "num_chunks", len(chunks), "labels", lbs, "count", j)
+			i.flushChan <- &flushChunk{
+				userID:   userID,
+				fp:       fp,
+				labels:   labels,
+				chunkMtx: chunkMtx,
+				chunk:    chunks[j],
+				done:     doneChan,
+				ctx:      ctx,
+			}
 		}
-	}
+	}()
 
 	var lastErr error
 	for j := 1; j <= len(chunks); j++ {
