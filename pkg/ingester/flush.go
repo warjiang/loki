@@ -305,14 +305,14 @@ func (i *Ingester) collectChunksToFlush(instance *instance, fp model.Fingerprint
 	defer stream.chunkMtx.Unlock()
 
 	var result []*chunkDesc
-	level.Info(util_log.Logger).Log("msg", "collecting chunks to flush", "fp", stream.fp, "num_chunks", len(stream.chunks), "labels", stream.labels)
+	level.Info(util_log.Logger).Log("msg", "collecting chunks to flush", "stream", fmt.Sprintf("%p", stream), "fp", stream.fp, "num_chunks", len(stream.chunks), "labels", stream.labels)
 	for j := range stream.chunks {
 		shouldFlush, reason := i.shouldFlushChunk(&stream.chunks[j])
 		from, to := stream.chunks[j].chunk.Bounds()
 		if !shouldFlush {
-			level.Info(util_log.Logger).Log("msg", "not flushing chunk", "fp", stream.fp, "position", j, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+			level.Info(util_log.Logger).Log("msg", "not flushing chunk", "stream", stream, "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
 		} else {
-			level.Info(util_log.Logger).Log("msg", "flushing chunk", "fp", stream.fp, "position", j, "reason", stream.chunks[j].reason, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+			level.Info(util_log.Logger).Log("msg", "flushing chunk", "stream", stream, "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "reason", stream.chunks[j].reason, "last_updated_ago", time.Now().Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
 		}
 		if immediate || shouldFlush {
 			// Ensure no more writes happen to this chunk.
@@ -360,14 +360,14 @@ func (i *Ingester) removeFlushedChunks(instance *instance, stream *stream, mayRe
 	defer stream.chunkMtx.Unlock()
 	prevNumChunks := len(stream.chunks)
 	var subtracted int
-	level.Info(util_log.Logger).Log("msg", "removing chunks", "fp", stream.fp, "stream", stream.labels, "total_chunks", len(stream.chunks))
+	level.Info(util_log.Logger).Log("msg", "removing chunks", "fp", stream.fp, "stream", fmt.Sprintf("%p", stream), "labels", stream.labels, "total_chunks", len(stream.chunks))
 	for j := range stream.chunks {
 		from, to := stream.chunks[j].chunk.Bounds()
 		if stream.chunks[j].flushed.IsZero() {
-			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not flushed", "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
+			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "reason", "not flushed", "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from), "closed", stream.chunks[j].closed)
 		}
 		if now.Sub(stream.chunks[0].flushed) < i.cfg.RetainPeriod {
-			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "reason", "not met retain period", "flushed", stream.chunks[j].flushed, "retained_time", now.Sub(stream.chunks[0].flushed), "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from))
+			level.Info(util_log.Logger).Log("msg", "not removing chunk", "fp", stream.fp, "position", j, "chunk", fmt.Sprintf("%p", &stream.chunks[j]), "reason", "not met retain period", "flushed", stream.chunks[j].flushed, "retained_time", now.Sub(stream.chunks[0].flushed), "last_updated_ago", now.Sub(stream.chunks[j].lastUpdated), "bounds_length", to.Sub(from))
 		}
 	}
 	for len(stream.chunks) > 0 {
