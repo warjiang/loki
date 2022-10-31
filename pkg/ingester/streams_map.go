@@ -1,15 +1,12 @@
 package ingester
 
 import (
-	"runtime/debug"
 	"sync"
 
-	"github.com/go-kit/log/level"
 	"github.com/prometheus/common/model"
 	"go.uber.org/atomic"
 
 	"github.com/grafana/loki/pkg/logql/syntax"
-	util_log "github.com/grafana/loki/pkg/util/log"
 )
 
 type streamsMap struct {
@@ -68,7 +65,6 @@ func (m *streamsMap) LoadOrStoreNew(key string, newStreamFn func() (*stream, err
 		// TODO not sure this is the best error handling
 		return nil, false, err
 	}
-	level.Info(util_log.Logger).Log("msg", "LoadOrStoreNew called", "key", key, "stack", string(debug.Stack()))
 	// TODO do we want to use the string or instead the hash?
 	return m.loadOrStoreNew(m.streams, labels.String(), newStreamFn, postLoadFn)
 }
