@@ -244,6 +244,8 @@ func (s *rateStore) RateFor(tenant string, streamHash uint64) int64 {
 	s.rateLock.RLock()
 	defer s.rateLock.RUnlock()
 
+	// TODO (tpatterson): HACK for use with ingesters that don't provide tenant information
+	tenant = ""
 	return s.rates[key(tenant, streamHash)]
 }
 
