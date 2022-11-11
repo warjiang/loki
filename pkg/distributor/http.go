@@ -82,11 +82,12 @@ func (d *Distributor) PushHandler(w http.ResponseWriter, r *http.Request) {
 // If the rate limiting strategy is local instead of global, no ring is used by
 // the distributor and as such, no ring status is returned from this function.
 func (d *Distributor) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// 只有global ingester情况下才存在一致性hash问题
 	if d.rateLimitStrat == validation.GlobalIngestionRateStrategy {
 		d.distributorsRing.ServeHTTP(w, r)
 		return
 	}
-
+	// local模式下不存在一致性hash问题，跳过
 	var noRingPage = `
 			<!DOCTYPE html>
 			<html>

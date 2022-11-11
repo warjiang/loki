@@ -13,7 +13,7 @@ services:
       - loki
 
   promtail:
-    image: grafana/promtail:2.5.0
+    image: harbormini.datarangers-onpremise.volces.com/grafana/promtail:2.5.0
     volumes:
       - /var/log:/var/log
     command: -config.file=/etc/promtail/config.yml
@@ -21,7 +21,7 @@ services:
       - loki
 
   grafana:
-    image: grafana/grafana:latest
+    image: harbormini.datarangers-onpremise.volces.com/grafana/grafana:latest
     ports:
       - "3000:3000"
     networks:

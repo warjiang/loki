@@ -209,6 +209,8 @@ func (t *Loki) initDistributor() (services.Service, error) {
 
 	t.Server.HTTP.Path("/distributor/ring").Methods("GET", "POST").Handler(t.distributor)
 
+	// /api/prom/push 等价于 /loki/api/v1/push
+	// /api/prom/push 官方开始废弃了，以后推荐用 /loki/api/v1/push
 	t.Server.HTTP.Path("/api/prom/push").Methods("POST").Handler(pushHandler)
 	t.Server.HTTP.Path("/loki/api/v1/push").Methods("POST").Handler(pushHandler)
 	return t.distributor, nil
