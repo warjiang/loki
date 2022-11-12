@@ -275,6 +275,7 @@ func (o *Overrides) AllByUserID() map[string]*Limits {
 
 // IngestionRateStrategy returns whether the ingestion rate limit should be individually applied
 // to each distributor instance (local) or evenly shared across the cluster (global).
+// ingest 限速策略，local 或者 global， 如果是local的话限速作用在每个独立的ingester内部，如果是global的话限速作用在集群内的所有的ingester上
 func (o *Overrides) IngestionRateStrategy() string {
 	// The ingestion rate strategy can't be overridden on a per-tenant basis,
 	// so here we just pick the value for a not-existing user ID (empty string).
