@@ -336,6 +336,11 @@ func (t *Loki) ListTargets() {
 
 // Run starts Loki running, and blocks until a Loki stops.
 func (t *Loki) Run(opts RunOpts) error {
+	/*
+	module manager 和 service manager 的区别在于
+	module manager  通过包装服务的方式用来控制模块启动顺序的，也就是管理依赖顺序的，比如A依赖B、C，则module manager会控制先启动B、C，再启动A，关闭时先关闭A，再关闭B、C
+	service manager 通过向服务中注入listener的方式控制服务来观测服务的状态，在此基础上实现并发的控制服务的启动、关闭，判断整体服务的状态等能力（比如判断服务集中是不是所有的服务都成功启动了）
+	*/
 	serviceMap, err := t.ModuleManager.InitModuleServices(t.Cfg.Target...)
 	if err != nil {
 		return err
