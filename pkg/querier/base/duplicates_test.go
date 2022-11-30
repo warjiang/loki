@@ -13,7 +13,7 @@ import (
 	"github.com/prometheus/prometheus/storage"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logproto"
 )
 
 func TestDuplicatesSamples(t *testing.T) {

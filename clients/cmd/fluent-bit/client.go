@@ -4,7 +4,7 @@ import (
 	"github.com/go-kit/log"
 	"github.com/prometheus/client_golang/prometheus"
 
-	"github.com/grafana/loki/clients/pkg/promtail/client"
+	"github.com/warjiang/loki/clients/pkg/promtail/client"
 )
 
 // NewClient creates a new client based on the fluentbit configuration.

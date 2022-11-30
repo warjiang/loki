@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.etcd.io/bbolt"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk"
 )
 
 var (

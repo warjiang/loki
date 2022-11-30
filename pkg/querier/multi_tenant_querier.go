@@ -7,9 +7,9 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/weaveworks/common/user"
 
-	"github.com/grafana/loki/pkg/iter"
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/tenant"
+	"github.com/warjiang/loki/pkg/iter"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/tenant"
 )
 
 const (

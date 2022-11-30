@@ -9,8 +9,8 @@ import (
 	"github.com/prometheus/prometheus/promql/parser"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/querier/astmapper"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/querier/astmapper"
 )
 
 func TestSelect(t *testing.T) {

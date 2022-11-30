@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/util/test"
+	"github.com/warjiang/loki/pkg/util/test"
 )
 
 func TestConfig_Unmarshal_Defaults(t *testing.T) {

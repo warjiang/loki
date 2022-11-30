@@ -3,9 +3,9 @@ package shipper
 import (
 	"context"
 
-	"github.com/grafana/loki/pkg/storage/stores/shipper/storage"
+	"github.com/warjiang/loki/pkg/storage/stores/shipper/storage"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk"
 )
 
 type boltDBShipperTableClient struct {

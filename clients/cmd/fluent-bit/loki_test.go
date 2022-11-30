@@ -9,10 +9,10 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/prometheus/common/model"
 
-	"github.com/grafana/loki/clients/pkg/promtail/api"
-	"github.com/grafana/loki/clients/pkg/promtail/client/fake"
+	"github.com/warjiang/loki/clients/pkg/promtail/api"
+	"github.com/warjiang/loki/clients/pkg/promtail/client/fake"
 
-	"github.com/grafana/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logproto"
 )
 
 var now = time.Now()

@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/weaveworks/common/httpgrpc"
 
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 var (

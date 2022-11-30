@@ -10,8 +10,8 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/logqlmodel/stats"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logqlmodel/stats"
 )
 
 func TestParseRangeQuery(t *testing.T) {

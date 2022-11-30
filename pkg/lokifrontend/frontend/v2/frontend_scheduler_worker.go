@@ -15,10 +15,10 @@ import (
 	"github.com/weaveworks/common/httpgrpc"
 	"google.golang.org/grpc"
 
-	"github.com/grafana/loki/pkg/lokifrontend/frontend/v2/frontendv2pb"
-	"github.com/grafana/loki/pkg/scheduler/schedulerpb"
-	"github.com/grafana/loki/pkg/util"
-	lokiutil "github.com/grafana/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/lokifrontend/frontend/v2/frontendv2pb"
+	"github.com/warjiang/loki/pkg/scheduler/schedulerpb"
+	"github.com/warjiang/loki/pkg/util"
+	lokiutil "github.com/warjiang/loki/pkg/util"
 )
 
 type frontendSchedulerWorkers struct {

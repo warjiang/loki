@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/tsdb/chunkenc"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk"
 )
 
 type chunkMergeIterator struct {

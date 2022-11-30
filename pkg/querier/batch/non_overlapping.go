@@ -1,7 +1,7 @@
 package batch
 
 import (
-	promchunk "github.com/grafana/loki/pkg/storage/chunk/encoding"
+	promchunk "github.com/warjiang/loki/pkg/storage/chunk/encoding"
 )
 
 type nonOverlappingIterator struct {

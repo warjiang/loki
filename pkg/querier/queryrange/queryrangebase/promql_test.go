@@ -16,7 +16,7 @@ import (
 	"github.com/prometheus/prometheus/storage"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/querier/astmapper"
+	"github.com/warjiang/loki/pkg/querier/astmapper"
 )
 
 var (

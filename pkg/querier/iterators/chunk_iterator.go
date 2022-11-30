@@ -3,8 +3,8 @@ package iterators
 import (
 	"github.com/prometheus/common/model"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
-	promchunk "github.com/grafana/loki/pkg/storage/chunk/encoding"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	promchunk "github.com/warjiang/loki/pkg/storage/chunk/encoding"
 )
 
 type chunkIterator struct {

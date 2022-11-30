@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/weaveworks/common/middleware"
 
-	querier_worker "github.com/grafana/loki/pkg/querier/worker"
+	querier_worker "github.com/warjiang/loki/pkg/querier/worker"
 )
 
 func Test_InitQuerierService(t *testing.T) {
@@ -101,7 +101,7 @@ func Test_InitQuerierService(t *testing.T) {
 			// note: this test only assures that the content type of the response is
 			// set if the handler function does not override it, which happens in the
 			// actual implementation, see
-			// https://github.com/grafana/loki/blob/34a012adcfade43291de3a7670f53679ea06aefe/pkg/lokifrontend/frontend/transport/handler.go#L136-L139
+			// https://github.com/warjiang/loki/blob/34a012adcfade43291de3a7670f53679ea06aefe/pkg/lokifrontend/frontend/transport/handler.go#L136-L139
 			config := WorkerServiceConfig{
 				QueryFrontendEnabled:  false,
 				QuerySchedulerEnabled: false,

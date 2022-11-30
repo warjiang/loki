@@ -13,8 +13,8 @@ import (
 	"github.com/prometheus/common/model"
 	"github.com/prometheus/prometheus/model/labels"
 
-	"github.com/grafana/loki/pkg/querier/astmapper"
-	util_log "github.com/grafana/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/querier/astmapper"
+	util_log "github.com/warjiang/loki/pkg/util/log"
 )
 
 const (

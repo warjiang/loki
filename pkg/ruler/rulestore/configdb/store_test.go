@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/grafana/loki/pkg/configs/client"
-	"github.com/grafana/loki/pkg/configs/userconfig"
+	"github.com/warjiang/loki/pkg/configs/client"
+	"github.com/warjiang/loki/pkg/configs/userconfig"
 )
 
 var zeroTime time.Time

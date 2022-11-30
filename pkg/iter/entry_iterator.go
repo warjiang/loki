@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/logqlmodel/stats"
-	"github.com/grafana/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logqlmodel/stats"
+	"github.com/warjiang/loki/pkg/util"
 )
 
 // EntryIterator iterates over entries in time-order.

@@ -16,13 +16,13 @@ import (
 	"github.com/go-kit/log/level"
 	"go.etcd.io/bbolt"
 
-	"github.com/grafana/loki/pkg/chunkenc"
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/chunk/local"
-	chunk_util "github.com/grafana/loki/pkg/storage/chunk/util"
-	shipper_util "github.com/grafana/loki/pkg/storage/stores/shipper/util"
-	"github.com/grafana/loki/pkg/tenant"
-	util_log "github.com/grafana/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/chunkenc"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk/local"
+	chunk_util "github.com/warjiang/loki/pkg/storage/chunk/util"
+	shipper_util "github.com/warjiang/loki/pkg/storage/stores/shipper/util"
+	"github.com/warjiang/loki/pkg/tenant"
+	util_log "github.com/warjiang/loki/pkg/util/log"
 )
 
 const (

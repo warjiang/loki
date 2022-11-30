@@ -18,12 +18,12 @@ import (
 
 	"github.com/prometheus/prometheus/model/labels"
 
-	"github.com/grafana/loki/clients/pkg/promtail/api"
-	"github.com/grafana/loki/clients/pkg/promtail/scrapeconfig"
-	"github.com/grafana/loki/clients/pkg/promtail/targets/target"
-	"github.com/grafana/loki/clients/pkg/promtail/targets/windows/win_eventlog"
+	"github.com/warjiang/loki/clients/pkg/promtail/api"
+	"github.com/warjiang/loki/clients/pkg/promtail/scrapeconfig"
+	"github.com/warjiang/loki/clients/pkg/promtail/targets/target"
+	"github.com/warjiang/loki/clients/pkg/promtail/targets/windows/win_eventlog"
 
-	util_log "github.com/grafana/loki/pkg/util/log"
+	util_log "github.com/warjiang/loki/pkg/util/log"
 )
 
 var fs = afero.NewOsFs()

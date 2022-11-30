@@ -22,11 +22,11 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/grafana/loki/pkg/lokifrontend/frontend/v2/frontendv2pb"
-	querier_stats "github.com/grafana/loki/pkg/querier/stats"
-	"github.com/grafana/loki/pkg/scheduler/schedulerpb"
-	"github.com/grafana/loki/pkg/tenant"
-	util_log "github.com/grafana/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/lokifrontend/frontend/v2/frontendv2pb"
+	querier_stats "github.com/warjiang/loki/pkg/querier/stats"
+	"github.com/warjiang/loki/pkg/scheduler/schedulerpb"
+	"github.com/warjiang/loki/pkg/tenant"
+	util_log "github.com/warjiang/loki/pkg/util/log"
 )
 
 func newSchedulerProcessor(cfg Config, handler RequestHandler, log log.Logger, metrics *Metrics) (*schedulerProcessor, []services.Service) {

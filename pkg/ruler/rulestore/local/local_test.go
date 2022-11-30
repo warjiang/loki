@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v3"
 
-	"github.com/grafana/loki/pkg/ruler/rulespb"
+	"github.com/warjiang/loki/pkg/ruler/rulespb"
 )
 
 func TestClient_LoadAllRuleGroups(t *testing.T) {

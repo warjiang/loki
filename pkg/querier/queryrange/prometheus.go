@@ -11,9 +11,9 @@ import (
 	otlog "github.com/opentracing/opentracing-go/log"
 	"github.com/prometheus/common/model"
 
-	"github.com/grafana/loki/pkg/loghttp"
-	"github.com/grafana/loki/pkg/logqlmodel/stats"
-	"github.com/grafana/loki/pkg/querier/queryrange/queryrangebase"
+	"github.com/warjiang/loki/pkg/loghttp"
+	"github.com/warjiang/loki/pkg/logqlmodel/stats"
+	"github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase"
 )
 
 var (

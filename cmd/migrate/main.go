@@ -15,20 +15,20 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 
-	"github.com/grafana/loki/pkg/tenant"
+	"github.com/warjiang/loki/pkg/tenant"
 
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/weaveworks/common/user"
 
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/loki"
-	"github.com/grafana/loki/pkg/storage"
-	"github.com/grafana/loki/pkg/storage/chunk"
-	chunk_storage "github.com/grafana/loki/pkg/storage/chunk/storage"
-	"github.com/grafana/loki/pkg/util"
-	"github.com/grafana/loki/pkg/util/cfg"
-	util_log "github.com/grafana/loki/pkg/util/log"
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/loki"
+	"github.com/warjiang/loki/pkg/storage"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	chunk_storage "github.com/warjiang/loki/pkg/storage/chunk/storage"
+	"github.com/warjiang/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/util/cfg"
+	util_log "github.com/warjiang/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 type syncRange struct {

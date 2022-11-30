@@ -36,7 +36,7 @@ import (
 	tsdb_errors "github.com/prometheus/prometheus/tsdb/errors"
 	"github.com/prometheus/prometheus/tsdb/fileutil"
 
-	"github.com/grafana/loki/pkg/util/encoding"
+	"github.com/warjiang/loki/pkg/util/encoding"
 )
 
 const (

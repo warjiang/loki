@@ -9,9 +9,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/chunk/local"
-	"github.com/grafana/loki/pkg/storage/stores/shipper/testutil"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk/local"
+	"github.com/warjiang/loki/pkg/storage/stores/shipper/testutil"
 )
 
 func buildTestTableManager(t *testing.T, testDir string) (*TableManager, *local.BoltIndexClient, stopFunc) {

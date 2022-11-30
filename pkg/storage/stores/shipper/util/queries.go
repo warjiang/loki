@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
-	util_math "github.com/grafana/loki/pkg/util/math"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	util_math "github.com/warjiang/loki/pkg/util/math"
 )
 
 const maxQueriesPerGoroutine = 100

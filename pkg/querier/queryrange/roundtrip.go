@@ -11,12 +11,12 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/weaveworks/common/httpgrpc"
 
-	"github.com/grafana/loki/pkg/loghttp"
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/querier/queryrange/queryrangebase"
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/chunk/cache"
-	"github.com/grafana/loki/pkg/tenant"
+	"github.com/warjiang/loki/pkg/loghttp"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk/cache"
+	"github.com/warjiang/loki/pkg/tenant"
 )
 
 // Config is the configuration for the queryrange tripperware

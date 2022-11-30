@@ -12,16 +12,16 @@ import (
 	"github.com/prometheus/prometheus/promql/parser"
 	"github.com/weaveworks/common/httpgrpc"
 
-	"github.com/grafana/loki/pkg/loghttp"
-	loghttp_legacy "github.com/grafana/loki/pkg/loghttp/legacy"
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/logqlmodel"
-	"github.com/grafana/loki/pkg/tenant"
-	util_log "github.com/grafana/loki/pkg/util/log"
-	"github.com/grafana/loki/pkg/util/marshal"
-	marshal_legacy "github.com/grafana/loki/pkg/util/marshal/legacy"
-	serverutil "github.com/grafana/loki/pkg/util/server"
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/loghttp"
+	loghttp_legacy "github.com/warjiang/loki/pkg/loghttp/legacy"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/logqlmodel"
+	"github.com/warjiang/loki/pkg/tenant"
+	util_log "github.com/warjiang/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/util/marshal"
+	marshal_legacy "github.com/warjiang/loki/pkg/util/marshal/legacy"
+	serverutil "github.com/warjiang/loki/pkg/util/server"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 const (

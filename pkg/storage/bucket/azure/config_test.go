@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/grafana/loki/pkg/storage/bucket/http"
+	"github.com/warjiang/loki/pkg/storage/bucket/http"
 )
 
 // defaultConfig should match the default flag values defined in RegisterFlagsWithPrefix.

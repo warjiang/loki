@@ -13,7 +13,7 @@ import (
 
 	"github.com/go-kit/log/level"
 
-	"github.com/grafana/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/util/log"
 )
 
 type MockStorageMode int

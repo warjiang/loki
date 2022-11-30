@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/model/relabel"
 
-	"github.com/grafana/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/util"
 )
 
 func format(lbs labels.Labels, cfg []*relabel.Config) model.LabelSet {

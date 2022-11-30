@@ -14,16 +14,16 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/weaveworks/common/user"
 
-	"github.com/grafana/loki/pkg/chunkenc"
-	"github.com/grafana/loki/pkg/ingester/client"
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/logql"
-	lstore "github.com/grafana/loki/pkg/storage"
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/chunk/local"
-	"github.com/grafana/loki/pkg/storage/chunk/storage"
-	util_log "github.com/grafana/loki/pkg/util/log"
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/chunkenc"
+	"github.com/warjiang/loki/pkg/ingester/client"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logql"
+	lstore "github.com/warjiang/loki/pkg/storage"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk/local"
+	"github.com/warjiang/loki/pkg/storage/chunk/storage"
+	util_log "github.com/warjiang/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 var (

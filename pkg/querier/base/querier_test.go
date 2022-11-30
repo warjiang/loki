@@ -22,16 +22,16 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/weaveworks/common/user"
 
-	"github.com/grafana/loki/pkg/ingester/client"
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/prom1/storage/metric"
-	"github.com/grafana/loki/pkg/querier/batch"
-	"github.com/grafana/loki/pkg/querier/iterators"
-	"github.com/grafana/loki/pkg/storage/chunk"
-	promchunk "github.com/grafana/loki/pkg/storage/chunk/encoding"
-	"github.com/grafana/loki/pkg/util"
-	"github.com/grafana/loki/pkg/util/chunkcompat"
-	"github.com/grafana/loki/pkg/util/validation"
+	"github.com/warjiang/loki/pkg/ingester/client"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/prom1/storage/metric"
+	"github.com/warjiang/loki/pkg/querier/batch"
+	"github.com/warjiang/loki/pkg/querier/iterators"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	promchunk "github.com/warjiang/loki/pkg/storage/chunk/encoding"
+	"github.com/warjiang/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/util/chunkcompat"
+	"github.com/warjiang/loki/pkg/util/validation"
 )
 
 const (

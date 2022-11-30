@@ -5,7 +5,7 @@ import (
 
 	"github.com/prometheus/common/model"
 
-	"github.com/grafana/loki/pkg/storage/chunk/encoding"
+	"github.com/warjiang/loki/pkg/storage/chunk/encoding"
 )
 
 // GzipLogChunk is a cortex encoding type for our chunks.

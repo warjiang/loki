@@ -12,8 +12,8 @@ import (
 	"github.com/weaveworks/common/httpgrpc"
 	"google.golang.org/grpc"
 
-	"github.com/grafana/loki/pkg/lokifrontend/frontend/v1/frontendv1pb"
-	querier_stats "github.com/grafana/loki/pkg/querier/stats"
+	"github.com/warjiang/loki/pkg/lokifrontend/frontend/v1/frontendv1pb"
+	querier_stats "github.com/warjiang/loki/pkg/querier/stats"
 )
 
 var (

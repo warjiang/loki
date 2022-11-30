@@ -17,9 +17,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/weaveworks/common/user"
 
-	"github.com/grafana/loki/pkg/querier/batch"
-	"github.com/grafana/loki/pkg/querier/chunkstore"
-	"github.com/grafana/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/querier/batch"
+	"github.com/warjiang/loki/pkg/querier/chunkstore"
+	"github.com/warjiang/loki/pkg/storage/chunk"
 )
 
 func getTarDataFromEnv(t testing.TB) (query string, from, through time.Time, step time.Duration, store chunkstore.ChunkStore) {

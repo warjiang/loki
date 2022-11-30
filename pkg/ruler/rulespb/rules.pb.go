@@ -10,8 +10,8 @@ import (
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	types "github.com/gogo/protobuf/types"
 	_ "github.com/golang/protobuf/ptypes/duration"
-	_ "github.com/grafana/loki/pkg/logproto"
-	github_com_grafana_loki_pkg_logproto "github.com/grafana/loki/pkg/logproto"
+	_ "github.com/warjiang/loki/pkg/logproto"
+	github_com_grafana_loki_pkg_logproto "github.com/warjiang/loki/pkg/logproto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -126,8 +126,8 @@ type RuleDesc struct {
 	Record      string                                              `protobuf:"bytes,2,opt,name=record,proto3" json:"record,omitempty"`
 	Alert       string                                              `protobuf:"bytes,3,opt,name=alert,proto3" json:"alert,omitempty"`
 	For         time.Duration                                       `protobuf:"bytes,4,opt,name=for,proto3,stdduration" json:"for"`
-	Labels      []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,5,rep,name=labels,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"labels"`
-	Annotations []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,6,rep,name=annotations,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"annotations"`
+	Labels      []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,5,rep,name=labels,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"labels"`
+	Annotations []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,6,rep,name=annotations,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"annotations"`
 }
 
 func (m *RuleDesc) Reset()      { *m = RuleDesc{} }

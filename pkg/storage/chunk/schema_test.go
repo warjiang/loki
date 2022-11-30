@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/weaveworks/common/test"
 
-	"github.com/grafana/loki/pkg/querier/astmapper"
+	"github.com/warjiang/loki/pkg/querier/astmapper"
 )
 
 type ByHashRangeKey []IndexEntry

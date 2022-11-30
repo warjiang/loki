@@ -11,7 +11,7 @@ import (
 	"github.com/grafana/dskit/services"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 func TestDistributorRingHandler(t *testing.T) {

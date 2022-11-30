@@ -14,13 +14,13 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/weaveworks/common/user"
 
-	"github.com/grafana/loki/pkg/ingester/client"
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/prom1/storage/metric"
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/chunk/encoding"
-	"github.com/grafana/loki/pkg/util"
-	"github.com/grafana/loki/pkg/util/chunkcompat"
+	"github.com/warjiang/loki/pkg/ingester/client"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/prom1/storage/metric"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk/encoding"
+	"github.com/warjiang/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/util/chunkcompat"
 )
 
 const (

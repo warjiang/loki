@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/storage/chunk/cache"
+	"github.com/warjiang/loki/pkg/storage/chunk/cache"
 )
 
 func TestTieredSimple(t *testing.T) {

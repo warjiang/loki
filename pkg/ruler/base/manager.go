@@ -19,7 +19,7 @@ import (
 	"github.com/weaveworks/common/user"
 	"golang.org/x/net/context/ctxhttp"
 
-	"github.com/grafana/loki/pkg/ruler/rulespb"
+	"github.com/warjiang/loki/pkg/ruler/rulespb"
 )
 
 type DefaultMultiTenantManager struct {

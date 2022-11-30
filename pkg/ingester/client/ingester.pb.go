@@ -10,8 +10,8 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_grafana_loki_pkg_logproto "github.com/grafana/loki/pkg/logproto"
-	logproto "github.com/grafana/loki/pkg/logproto"
+	github_com_grafana_loki_pkg_logproto "github.com/warjiang/loki/pkg/logproto"
+	logproto "github.com/warjiang/loki/pkg/logproto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -986,7 +986,7 @@ func (m *MetricsMetadataResponse) GetMetadata() []*logproto.MetricMetadata {
 type TimeSeriesChunk struct {
 	FromIngesterId string                                              `protobuf:"bytes,1,opt,name=from_ingester_id,json=fromIngesterId,proto3" json:"from_ingester_id,omitempty"`
 	UserId         string                                              `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Labels         []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,3,rep,name=labels,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"labels"`
+	Labels         []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,3,rep,name=labels,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"labels"`
 	Chunks         []Chunk                                             `protobuf:"bytes,4,rep,name=chunks,proto3" json:"chunks"`
 }
 

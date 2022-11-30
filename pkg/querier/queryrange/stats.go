@@ -14,12 +14,12 @@ import (
 	promql_parser "github.com/prometheus/prometheus/promql/parser"
 	"github.com/weaveworks/common/middleware"
 
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/logqlmodel"
-	"github.com/grafana/loki/pkg/logqlmodel/stats"
-	"github.com/grafana/loki/pkg/querier/queryrange/queryrangebase"
-	util_log "github.com/grafana/loki/pkg/util/log"
-	"github.com/grafana/loki/pkg/util/spanlogger"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/logqlmodel"
+	"github.com/warjiang/loki/pkg/logqlmodel/stats"
+	"github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase"
+	util_log "github.com/warjiang/loki/pkg/util/log"
+	"github.com/warjiang/loki/pkg/util/spanlogger"
 )
 
 type ctxKeyType string

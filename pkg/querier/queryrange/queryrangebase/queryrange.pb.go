@@ -10,8 +10,8 @@ import (
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	types "github.com/gogo/protobuf/types"
 	_ "github.com/golang/protobuf/ptypes/duration"
-	github_com_grafana_loki_pkg_logproto "github.com/grafana/loki/pkg/logproto"
-	logproto "github.com/grafana/loki/pkg/logproto"
+	github_com_grafana_loki_pkg_logproto "github.com/warjiang/loki/pkg/logproto"
+	logproto "github.com/warjiang/loki/pkg/logproto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -360,7 +360,7 @@ func (m *PrometheusData) GetResult() []SampleStream {
 }
 
 type SampleStream struct {
-	Labels  []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,1,rep,name=labels,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"metric"`
+	Labels  []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,1,rep,name=labels,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"metric"`
 	Samples []logproto.LegacySample                             `protobuf:"bytes,2,rep,name=samples,proto3" json:"values"`
 }
 

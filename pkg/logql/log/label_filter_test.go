@@ -9,7 +9,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/logqlmodel"
+	"github.com/warjiang/loki/pkg/logqlmodel"
 )
 
 func TestBinary_Filter(t *testing.T) {

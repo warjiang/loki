@@ -6,14 +6,14 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/grafana/loki/clients/pkg/promtail/client"
-	"github.com/grafana/loki/clients/pkg/promtail/limit"
-	"github.com/grafana/loki/clients/pkg/promtail/positions"
-	"github.com/grafana/loki/clients/pkg/promtail/scrapeconfig"
-	"github.com/grafana/loki/clients/pkg/promtail/server"
-	"github.com/grafana/loki/clients/pkg/promtail/targets/file"
+	"github.com/warjiang/loki/clients/pkg/promtail/client"
+	"github.com/warjiang/loki/clients/pkg/promtail/limit"
+	"github.com/warjiang/loki/clients/pkg/promtail/positions"
+	"github.com/warjiang/loki/clients/pkg/promtail/scrapeconfig"
+	"github.com/warjiang/loki/clients/pkg/promtail/server"
+	"github.com/warjiang/loki/clients/pkg/promtail/targets/file"
 
-	"github.com/grafana/loki/pkg/util/flagext"
+	"github.com/warjiang/loki/pkg/util/flagext"
 )
 
 // Config for promtail, describing what files to watch.

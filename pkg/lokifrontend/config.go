@@ -3,9 +3,9 @@ package lokifrontend
 import (
 	"flag"
 
-	"github.com/grafana/loki/pkg/lokifrontend/frontend/transport"
-	v1 "github.com/grafana/loki/pkg/lokifrontend/frontend/v1"
-	v2 "github.com/grafana/loki/pkg/lokifrontend/frontend/v2"
+	"github.com/warjiang/loki/pkg/lokifrontend/frontend/transport"
+	v1 "github.com/warjiang/loki/pkg/lokifrontend/frontend/v1"
+	v2 "github.com/warjiang/loki/pkg/lokifrontend/frontend/v2"
 )
 
 type Config struct {

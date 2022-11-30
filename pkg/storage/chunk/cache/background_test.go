@@ -3,8 +3,8 @@ package cache_test
 import (
 	"testing"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/chunk/cache"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/chunk/cache"
 )
 
 func TestBackground(t *testing.T) {

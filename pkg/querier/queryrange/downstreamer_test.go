@@ -12,11 +12,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/atomic"
 
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/logqlmodel"
-	"github.com/grafana/loki/pkg/logqlmodel/stats"
-	"github.com/grafana/loki/pkg/querier/queryrange/queryrangebase"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/logqlmodel"
+	"github.com/warjiang/loki/pkg/logqlmodel/stats"
+	"github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase"
 )
 
 func testSampleStreams() []queryrangebase.SampleStream {

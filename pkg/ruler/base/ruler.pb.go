@@ -12,9 +12,9 @@ import (
 	_ "github.com/gogo/protobuf/types"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	_ "github.com/golang/protobuf/ptypes/duration"
-	_ "github.com/grafana/loki/pkg/logproto"
-	github_com_grafana_loki_pkg_logproto "github.com/grafana/loki/pkg/logproto"
-	rulespb "github.com/grafana/loki/pkg/ruler/rulespb"
+	_ "github.com/warjiang/loki/pkg/logproto"
+	github_com_grafana_loki_pkg_logproto "github.com/warjiang/loki/pkg/logproto"
+	rulespb "github.com/warjiang/loki/pkg/ruler/rulespb"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -278,8 +278,8 @@ func (m *RuleStateDesc) GetEvaluationDuration() time.Duration {
 
 type AlertStateDesc struct {
 	State       string                                              `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
-	Labels      []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,2,rep,name=labels,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"labels"`
-	Annotations []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,3,rep,name=annotations,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"annotations"`
+	Labels      []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,2,rep,name=labels,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"labels"`
+	Annotations []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,3,rep,name=annotations,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"annotations"`
 	Value       float64                                             `protobuf:"fixed64,4,opt,name=value,proto3" json:"value,omitempty"`
 	ActiveAt    time.Time                                           `protobuf:"bytes,5,opt,name=active_at,json=activeAt,proto3,stdtime" json:"active_at"`
 	FiredAt     time.Time                                           `protobuf:"bytes,6,opt,name=fired_at,json=firedAt,proto3,stdtime" json:"fired_at"`

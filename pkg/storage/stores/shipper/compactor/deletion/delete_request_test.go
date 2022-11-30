@@ -8,8 +8,8 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/storage/stores/shipper/compactor/retention"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/storage/stores/shipper/compactor/retention"
 )
 
 func TestDeleteRequest_IsDeleted(t *testing.T) {

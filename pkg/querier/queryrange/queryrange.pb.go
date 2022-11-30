@@ -9,11 +9,11 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/gogo/protobuf/types"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
-	github_com_grafana_loki_pkg_logproto "github.com/grafana/loki/pkg/logproto"
-	logproto "github.com/grafana/loki/pkg/logproto"
-	stats "github.com/grafana/loki/pkg/logqlmodel/stats"
-	github_com_grafana_loki_pkg_querier_queryrange_queryrangebase "github.com/grafana/loki/pkg/querier/queryrange/queryrangebase"
-	queryrangebase "github.com/grafana/loki/pkg/querier/queryrange/queryrangebase"
+	github_com_grafana_loki_pkg_logproto "github.com/warjiang/loki/pkg/logproto"
+	logproto "github.com/warjiang/loki/pkg/logproto"
+	stats "github.com/warjiang/loki/pkg/logqlmodel/stats"
+	github_com_grafana_loki_pkg_querier_queryrange_queryrangebase "github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase"
+	queryrangebase "github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -233,7 +233,7 @@ type LokiResponse struct {
 	Limit      uint32                                                                                   `protobuf:"varint,6,opt,name=limit,proto3" json:"limit,omitempty"`
 	Version    uint32                                                                                   `protobuf:"varint,7,opt,name=version,proto3" json:"version,omitempty"`
 	Statistics stats.Result                                                                             `protobuf:"bytes,8,opt,name=statistics,proto3" json:"statistics"`
-	Headers    []github_com_grafana_loki_pkg_querier_queryrange_queryrangebase.PrometheusResponseHeader `protobuf:"bytes,9,rep,name=Headers,proto3,customtype=github.com/grafana/loki/pkg/querier/queryrange/queryrangebase.PrometheusResponseHeader" json:"-"`
+	Headers    []github_com_grafana_loki_pkg_querier_queryrange_queryrangebase.PrometheusResponseHeader `protobuf:"bytes,9,rep,name=Headers,proto3,customtype=github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase.PrometheusResponseHeader" json:"-"`
 }
 
 func (m *LokiResponse) Reset()      { *m = LokiResponse{} }
@@ -403,7 +403,7 @@ type LokiSeriesResponse struct {
 	Status  string                                                                                   `protobuf:"bytes,1,opt,name=Status,proto3" json:"status"`
 	Data    []logproto.SeriesIdentifier                                                              `protobuf:"bytes,2,rep,name=Data,proto3" json:"data,omitempty"`
 	Version uint32                                                                                   `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	Headers []github_com_grafana_loki_pkg_querier_queryrange_queryrangebase.PrometheusResponseHeader `protobuf:"bytes,4,rep,name=Headers,proto3,customtype=github.com/grafana/loki/pkg/querier/queryrange/queryrangebase.PrometheusResponseHeader" json:"-"`
+	Headers []github_com_grafana_loki_pkg_querier_queryrange_queryrangebase.PrometheusResponseHeader `protobuf:"bytes,4,rep,name=Headers,proto3,customtype=github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase.PrometheusResponseHeader" json:"-"`
 }
 
 func (m *LokiSeriesResponse) Reset()      { *m = LokiSeriesResponse{} }
@@ -522,7 +522,7 @@ type LokiLabelNamesResponse struct {
 	Status  string                                                                                   `protobuf:"bytes,1,opt,name=Status,proto3" json:"status"`
 	Data    []string                                                                                 `protobuf:"bytes,2,rep,name=Data,proto3" json:"data,omitempty"`
 	Version uint32                                                                                   `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	Headers []github_com_grafana_loki_pkg_querier_queryrange_queryrangebase.PrometheusResponseHeader `protobuf:"bytes,4,rep,name=Headers,proto3,customtype=github.com/grafana/loki/pkg/querier/queryrange/queryrangebase.PrometheusResponseHeader" json:"-"`
+	Headers []github_com_grafana_loki_pkg_querier_queryrange_queryrangebase.PrometheusResponseHeader `protobuf:"bytes,4,rep,name=Headers,proto3,customtype=github.com/warjiang/loki/pkg/querier/queryrange/queryrangebase.PrometheusResponseHeader" json:"-"`
 }
 
 func (m *LokiLabelNamesResponse) Reset()      { *m = LokiLabelNamesResponse{} }
@@ -580,7 +580,7 @@ func (m *LokiLabelNamesResponse) GetVersion() uint32 {
 
 type LokiData struct {
 	ResultType string                                        `protobuf:"bytes,1,opt,name=ResultType,proto3" json:"resultType"`
-	Result     []github_com_grafana_loki_pkg_logproto.Stream `protobuf:"bytes,2,rep,name=Result,proto3,customtype=github.com/grafana/loki/pkg/logproto.Stream" json:"result"`
+	Result     []github_com_grafana_loki_pkg_logproto.Stream `protobuf:"bytes,2,rep,name=Result,proto3,customtype=github.com/warjiang/loki/pkg/logproto.Stream" json:"result"`
 }
 
 func (m *LokiData) Reset()      { *m = LokiData{} }

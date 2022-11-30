@@ -7,8 +7,8 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/storage/tsdb/index"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/storage/tsdb/index"
 )
 
 func mustParseLabels(s string) labels.Labels {

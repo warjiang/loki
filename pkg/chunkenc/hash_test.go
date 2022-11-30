@@ -8,7 +8,7 @@ import (
 	"github.com/segmentio/fasthash/fnv1a"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/pkg/chunkenc/testdata"
+	"github.com/warjiang/loki/pkg/chunkenc/testdata"
 )
 
 var res uint64

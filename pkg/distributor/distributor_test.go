@@ -27,13 +27,13 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/grafana/loki/pkg/ingester/client"
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/runtime"
-	fe "github.com/grafana/loki/pkg/util/flagext"
-	loki_net "github.com/grafana/loki/pkg/util/net"
-	"github.com/grafana/loki/pkg/util/test"
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/ingester/client"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/runtime"
+	fe "github.com/warjiang/loki/pkg/util/flagext"
+	loki_net "github.com/warjiang/loki/pkg/util/net"
+	"github.com/warjiang/loki/pkg/util/test"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 const (

@@ -15,9 +15,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/clients/pkg/promtail/client/fake"
-	"github.com/grafana/loki/clients/pkg/promtail/positions"
-	"github.com/grafana/loki/clients/pkg/promtail/scrapeconfig"
+	"github.com/warjiang/loki/clients/pkg/promtail/client/fake"
+	"github.com/warjiang/loki/clients/pkg/promtail/positions"
+	"github.com/warjiang/loki/clients/pkg/promtail/scrapeconfig"
 )
 
 func Test_CloudflareTarget(t *testing.T) {

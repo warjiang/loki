@@ -13,8 +13,8 @@ import (
 	"github.com/go-kit/log/level"
 	promwal "github.com/prometheus/prometheus/tsdb/wal"
 
-	"github.com/grafana/loki/pkg/ruler/storage/instance"
-	"github.com/grafana/loki/pkg/ruler/storage/wal"
+	"github.com/warjiang/loki/pkg/ruler/storage/instance"
+	"github.com/warjiang/loki/pkg/ruler/storage/wal"
 )
 
 // Default settings for the WAL cleaner.

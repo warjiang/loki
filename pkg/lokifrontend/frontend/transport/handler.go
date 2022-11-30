@@ -20,10 +20,10 @@ import (
 	"github.com/weaveworks/common/httpgrpc"
 	"github.com/weaveworks/common/httpgrpc/server"
 
-	querier_stats "github.com/grafana/loki/pkg/querier/stats"
-	"github.com/grafana/loki/pkg/tenant"
-	"github.com/grafana/loki/pkg/util"
-	util_log "github.com/grafana/loki/pkg/util/log"
+	querier_stats "github.com/warjiang/loki/pkg/querier/stats"
+	"github.com/warjiang/loki/pkg/tenant"
+	"github.com/warjiang/loki/pkg/util"
+	util_log "github.com/warjiang/loki/pkg/util/log"
 )
 
 const (

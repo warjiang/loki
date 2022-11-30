@@ -14,10 +14,10 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 
-	"github.com/grafana/loki/pkg/canary/comparator"
-	"github.com/grafana/loki/pkg/canary/reader"
-	"github.com/grafana/loki/pkg/canary/writer"
-	_ "github.com/grafana/loki/pkg/util/build"
+	"github.com/warjiang/loki/pkg/canary/comparator"
+	"github.com/warjiang/loki/pkg/canary/reader"
+	"github.com/warjiang/loki/pkg/canary/writer"
+	_ "github.com/warjiang/loki/pkg/util/build"
 )
 
 type canary struct {

@@ -6,9 +6,9 @@ import (
 
 	"github.com/grafana/dskit/services"
 
-	"github.com/grafana/loki/pkg/storage/chunk"
-	"github.com/grafana/loki/pkg/storage/stores/shipper/indexgateway/indexgatewaypb"
-	"github.com/grafana/loki/pkg/storage/stores/shipper/util"
+	"github.com/warjiang/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/storage/stores/shipper/indexgateway/indexgatewaypb"
+	"github.com/warjiang/loki/pkg/storage/stores/shipper/util"
 )
 
 const maxIndexEntriesPerResponse = 1000

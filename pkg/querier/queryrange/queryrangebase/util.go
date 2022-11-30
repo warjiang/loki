@@ -6,8 +6,8 @@ import (
 
 	"github.com/weaveworks/common/httpgrpc"
 
-	"github.com/grafana/loki/pkg/tenant"
-	"github.com/grafana/loki/pkg/util/validation"
+	"github.com/warjiang/loki/pkg/tenant"
+	"github.com/warjiang/loki/pkg/util/validation"
 )
 
 // RequestResponse contains a request response and the respective request that was used.

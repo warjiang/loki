@@ -13,12 +13,12 @@ import (
 	"github.com/prometheus/common/version"
 	"gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/grafana/loki/pkg/logcli/client"
-	"github.com/grafana/loki/pkg/logcli/labelquery"
-	"github.com/grafana/loki/pkg/logcli/output"
-	"github.com/grafana/loki/pkg/logcli/query"
-	"github.com/grafana/loki/pkg/logcli/seriesquery"
-	_ "github.com/grafana/loki/pkg/util/build"
+	"github.com/warjiang/loki/pkg/logcli/client"
+	"github.com/warjiang/loki/pkg/logcli/labelquery"
+	"github.com/warjiang/loki/pkg/logcli/output"
+	"github.com/warjiang/loki/pkg/logcli/query"
+	"github.com/warjiang/loki/pkg/logcli/seriesquery"
+	_ "github.com/warjiang/loki/pkg/util/build"
 )
 
 var (
@@ -368,7 +368,7 @@ func mustParse(t string, defaultTime time.Time) time.Time {
 
 // This method is to duplicate the same logic of `step` value from `start` and `end`
 // done on the loki server side.
-// https://github.com/grafana/loki/blob/main/pkg/loghttp/params.go
+// https://github.com/warjiang/loki/blob/main/pkg/loghttp/params.go
 func defaultQueryRangeStep(start, end time.Time) time.Duration {
 	step := int(math.Max(math.Floor(end.Sub(start).Seconds()/250), 1))
 	return time.Duration(step) * time.Second

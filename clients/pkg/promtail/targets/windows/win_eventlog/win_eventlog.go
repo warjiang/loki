@@ -38,7 +38,7 @@ import (
 	"github.com/influxdata/telegraf/plugins/inputs"
 	"golang.org/x/sys/windows"
 
-	util_log "github.com/grafana/loki/pkg/util/log"
+	util_log "github.com/warjiang/loki/pkg/util/log"
 )
 
 var sampleConfig = `

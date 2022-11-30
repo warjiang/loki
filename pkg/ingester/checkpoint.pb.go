@@ -10,8 +10,8 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	_ "github.com/gogo/protobuf/types"
 	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
-	_ "github.com/grafana/loki/pkg/logproto"
-	github_com_grafana_loki_pkg_logproto "github.com/grafana/loki/pkg/logproto"
+	_ "github.com/warjiang/loki/pkg/logproto"
+	github_com_grafana_loki_pkg_logproto "github.com/warjiang/loki/pkg/logproto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -140,7 +140,7 @@ type Series struct {
 	UserID string `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
 	// post mapped fingerprint is necessary because subsequent wal writes will reference it.
 	Fingerprint uint64                                              `protobuf:"varint,2,opt,name=fingerprint,proto3" json:"fingerprint,omitempty"`
-	Labels      []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,3,rep,name=labels,proto3,customtype=github.com/grafana/loki/pkg/logproto.LabelAdapter" json:"labels"`
+	Labels      []github_com_grafana_loki_pkg_logproto.LabelAdapter `protobuf:"bytes,3,rep,name=labels,proto3,customtype=github.com/warjiang/loki/pkg/logproto.LabelAdapter" json:"labels"`
 	Chunks      []Chunk                                             `protobuf:"bytes,4,rep,name=chunks,proto3" json:"chunks"`
 	// most recently pushed timestamp.
 	To time.Time `protobuf:"bytes,5,opt,name=to,proto3,stdtime" json:"to"`

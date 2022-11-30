@@ -13,10 +13,10 @@ import (
 	"github.com/prometheus/common/model"
 	"github.com/weaveworks/common/logging"
 
-	"github.com/grafana/loki/clients/pkg/logentry/logql"
-	"github.com/grafana/loki/clients/pkg/promtail/client"
+	"github.com/warjiang/loki/clients/pkg/logentry/logql"
+	"github.com/warjiang/loki/clients/pkg/promtail/client"
 
-	lokiflag "github.com/grafana/loki/pkg/util/flagext"
+	lokiflag "github.com/warjiang/loki/pkg/util/flagext"
 )
 
 var defaultClientCfg = client.Config{}

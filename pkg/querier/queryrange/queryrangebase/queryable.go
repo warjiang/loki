@@ -8,7 +8,7 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
 
-	"github.com/grafana/loki/pkg/querier/astmapper"
+	"github.com/warjiang/loki/pkg/querier/astmapper"
 )
 
 const (

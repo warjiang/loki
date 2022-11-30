@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 
-	"github.com/grafana/loki/clients/pkg/promtail/client"
+	"github.com/warjiang/loki/clients/pkg/promtail/client"
 
-	"github.com/grafana/loki/pkg/util/flagext"
+	"github.com/warjiang/loki/pkg/util/flagext"
 )
 
 const testFile = `

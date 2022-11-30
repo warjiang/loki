@@ -16,8 +16,8 @@ import (
 	"github.com/prometheus/prometheus/rules"
 	"github.com/prometheus/prometheus/storage"
 
-	"github.com/grafana/loki/pkg/querier/series"
-	"github.com/grafana/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/querier/series"
+	"github.com/warjiang/loki/pkg/util"
 )
 
 const (

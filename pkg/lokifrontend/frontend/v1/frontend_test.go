@@ -29,10 +29,10 @@ import (
 	"go.uber.org/atomic"
 	"google.golang.org/grpc"
 
-	"github.com/grafana/loki/pkg/lokifrontend/frontend/transport"
-	"github.com/grafana/loki/pkg/lokifrontend/frontend/v1/frontendv1pb"
-	querier_worker "github.com/grafana/loki/pkg/querier/worker"
-	"github.com/grafana/loki/pkg/scheduler/queue"
+	"github.com/warjiang/loki/pkg/lokifrontend/frontend/transport"
+	"github.com/warjiang/loki/pkg/lokifrontend/frontend/v1/frontendv1pb"
+	querier_worker "github.com/warjiang/loki/pkg/querier/worker"
+	"github.com/warjiang/loki/pkg/scheduler/queue"
 )
 
 const (

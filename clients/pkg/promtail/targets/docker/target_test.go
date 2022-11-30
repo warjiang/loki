@@ -15,8 +15,8 @@ import (
 	"github.com/prometheus/prometheus/model/relabel"
 	"github.com/stretchr/testify/require"
 
-	"github.com/grafana/loki/clients/pkg/promtail/client/fake"
-	"github.com/grafana/loki/clients/pkg/promtail/positions"
+	"github.com/warjiang/loki/clients/pkg/promtail/client/fake"
+	"github.com/warjiang/loki/clients/pkg/promtail/positions"
 )
 
 func Test_DockerTarget(t *testing.T) {

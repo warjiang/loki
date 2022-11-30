@@ -8,8 +8,8 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	"github.com/prometheus/prometheus/storage"
 
-	"github.com/grafana/loki/pkg/querier/chunkstore"
-	"github.com/grafana/loki/pkg/storage/chunk"
+	"github.com/warjiang/loki/pkg/querier/chunkstore"
+	"github.com/warjiang/loki/pkg/storage/chunk"
 )
 
 // LazyQueryable wraps a storage.Queryable

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/grafana/loki/pkg/ruler/rulespb"
+	"github.com/warjiang/loki/pkg/ruler/rulespb"
 )
 
 var (

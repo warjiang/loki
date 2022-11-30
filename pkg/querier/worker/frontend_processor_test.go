@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 
-	"github.com/grafana/loki/pkg/util/test"
+	"github.com/warjiang/loki/pkg/util/test"
 )
 
 const bufConnSize = 1024 * 1024

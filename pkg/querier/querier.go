@@ -12,16 +12,16 @@ import (
 	"github.com/weaveworks/common/httpgrpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/grafana/loki/pkg/iter"
-	"github.com/grafana/loki/pkg/loghttp"
-	"github.com/grafana/loki/pkg/logproto"
-	"github.com/grafana/loki/pkg/logql"
-	"github.com/grafana/loki/pkg/storage"
-	"github.com/grafana/loki/pkg/tenant"
-	listutil "github.com/grafana/loki/pkg/util"
-	"github.com/grafana/loki/pkg/util/spanlogger"
-	util_validation "github.com/grafana/loki/pkg/util/validation"
-	"github.com/grafana/loki/pkg/validation"
+	"github.com/warjiang/loki/pkg/iter"
+	"github.com/warjiang/loki/pkg/loghttp"
+	"github.com/warjiang/loki/pkg/logproto"
+	"github.com/warjiang/loki/pkg/logql"
+	"github.com/warjiang/loki/pkg/storage"
+	"github.com/warjiang/loki/pkg/tenant"
+	listutil "github.com/warjiang/loki/pkg/util"
+	"github.com/warjiang/loki/pkg/util/spanlogger"
+	util_validation "github.com/warjiang/loki/pkg/util/validation"
+	"github.com/warjiang/loki/pkg/validation"
 )
 
 const (

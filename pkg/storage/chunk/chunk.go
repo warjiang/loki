@@ -17,8 +17,8 @@ import (
 	"github.com/prometheus/prometheus/model/labels"
 	errs "github.com/weaveworks/common/errors"
 
-	"github.com/grafana/loki/pkg/prom1/storage/metric"
-	prom_chunk "github.com/grafana/loki/pkg/storage/chunk/encoding"
+	"github.com/warjiang/loki/pkg/prom1/storage/metric"
+	prom_chunk "github.com/warjiang/loki/pkg/storage/chunk/encoding"
 )
 
 const (
