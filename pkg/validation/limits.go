@@ -14,7 +14,6 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/warjiang/loki/pkg/logql"
-	"github.com/warjiang/loki/pkg/ruler/util"
 	"github.com/warjiang/loki/pkg/util/flagext"
 )
 
@@ -98,7 +97,6 @@ type Limits struct {
 	RulerRemoteWriteURL                    string                       `yaml:"ruler_remote_write_url" json:"ruler_remote_write_url"`
 	RulerRemoteWriteTimeout                time.Duration                `yaml:"ruler_remote_write_timeout" json:"ruler_remote_write_timeout"`
 	RulerRemoteWriteHeaders                OverwriteMarshalingStringMap `yaml:"ruler_remote_write_headers" json:"ruler_remote_write_headers"`
-	RulerRemoteWriteRelabelConfigs         []*util.RelabelConfig        `yaml:"ruler_remote_write_relabel_configs,omitempty" json:"ruler_remote_write_relabel_configs,omitempty"`
 	RulerRemoteWriteQueueCapacity          int                          `yaml:"ruler_remote_write_queue_capacity" json:"ruler_remote_write_queue_capacity"`
 	RulerRemoteWriteQueueMinShards         int                          `yaml:"ruler_remote_write_queue_min_shards" json:"ruler_remote_write_queue_min_shards"`
 	RulerRemoteWriteQueueMaxShards         int                          `yaml:"ruler_remote_write_queue_max_shards" json:"ruler_remote_write_queue_max_shards"`
@@ -464,11 +462,6 @@ func (o *Overrides) RulerRemoteWriteTimeout(userID string) time.Duration {
 // RulerRemoteWriteHeaders returns the headers to use in a remote-write for a given user.
 func (o *Overrides) RulerRemoteWriteHeaders(userID string) map[string]string {
 	return o.getOverridesForUser(userID).RulerRemoteWriteHeaders.Map()
-}
-
-// RulerRemoteWriteRelabelConfigs returns the write relabel configs to use in a remote-write for a given user.
-func (o *Overrides) RulerRemoteWriteRelabelConfigs(userID string) []*util.RelabelConfig {
-	return o.getOverridesForUser(userID).RulerRemoteWriteRelabelConfigs
 }
 
 // RulerRemoteWriteQueueCapacity returns the queue capacity to use in a remote-write for a given user.

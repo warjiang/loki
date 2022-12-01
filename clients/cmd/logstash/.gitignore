@@ -1,7 +1,0 @@
-*.gem
-.ruby-version
-.bundle
-logstash
-path
-!lib
-.rakeTasks

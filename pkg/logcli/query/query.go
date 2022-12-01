@@ -1,9 +1,6 @@
 package query
 
 import (
-	"context"
-	"errors"
-	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -14,24 +11,12 @@ import (
 
 	"github.com/fatih/color"
 	json "github.com/json-iterator/go"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/weaveworks/common/user"
-
 	"github.com/warjiang/loki/pkg/logcli/client"
 	"github.com/warjiang/loki/pkg/logcli/output"
 	"github.com/warjiang/loki/pkg/loghttp"
 	"github.com/warjiang/loki/pkg/logproto"
-	"github.com/warjiang/loki/pkg/logql"
 	"github.com/warjiang/loki/pkg/logqlmodel"
 	"github.com/warjiang/loki/pkg/logqlmodel/stats"
-	"github.com/warjiang/loki/pkg/loki"
-	"github.com/warjiang/loki/pkg/storage"
-	chunk_storage "github.com/warjiang/loki/pkg/storage/chunk/storage"
-	"github.com/warjiang/loki/pkg/storage/stores/shipper"
-	"github.com/warjiang/loki/pkg/util/cfg"
-	util_log "github.com/warjiang/loki/pkg/util/log"
-	"github.com/warjiang/loki/pkg/util/marshal"
-	"github.com/warjiang/loki/pkg/validation"
 )
 
 type streamEntryPair struct {
@@ -60,13 +45,6 @@ type Query struct {
 
 // DoQuery executes the query and prints out the results
 func (q *Query) DoQuery(c client.Client, out output.LogOutput, statistics bool) {
-	if q.LocalConfig != "" {
-		if err := q.DoLocalQuery(out, statistics, c.GetOrgID()); err != nil {
-			log.Fatalf("Query failed: %+v", err)
-		}
-		return
-	}
-
 	d := q.resultsDirection()
 
 	var resp *loghttp.QueryResponse
@@ -168,85 +146,6 @@ func (q *Query) printResult(value loghttp.ResultValue, out output.LogOutput, las
 		log.Fatalf("Unable to print unsupported type: %v", value.Type())
 	}
 	return length, entry
-}
-
-// DoLocalQuery executes the query against the local store using a Loki configuration file.
-func (q *Query) DoLocalQuery(out output.LogOutput, statistics bool, orgID string) error {
-	var conf loki.Config
-	conf.RegisterFlags(flag.CommandLine)
-	if q.LocalConfig == "" {
-		return errors.New("no supplied config file")
-	}
-	if err := cfg.YAML(q.LocalConfig, false)(&conf); err != nil {
-		return err
-	}
-
-	if err := conf.Validate(); err != nil {
-		return err
-	}
-
-	limits, err := validation.NewOverrides(conf.LimitsConfig, nil)
-	if err != nil {
-		return err
-	}
-	cm := chunk_storage.NewClientMetrics()
-	storage.RegisterCustomIndexClients(&conf.StorageConfig, cm, prometheus.DefaultRegisterer)
-	conf.StorageConfig.BoltDBShipperConfig.Mode = shipper.ModeReadOnly
-	chunkStore, err := chunk_storage.NewStore(conf.StorageConfig.Config, conf.ChunkStoreConfig.StoreConfig, conf.SchemaConfig.SchemaConfig, limits, cm, prometheus.DefaultRegisterer, nil, util_log.Logger)
-	if err != nil {
-		return err
-	}
-
-	querier, err := storage.NewStore(conf.StorageConfig, conf.SchemaConfig, chunkStore, prometheus.DefaultRegisterer)
-	if err != nil {
-		return err
-	}
-
-	eng := logql.NewEngine(conf.Querier.Engine, querier, limits, util_log.Logger)
-	var query logql.Query
-
-	if q.isInstant() {
-		query = eng.Query(logql.NewLiteralParams(
-			q.QueryString,
-			q.Start,
-			q.Start,
-			0,
-			0,
-			q.resultsDirection(),
-			uint32(q.Limit),
-			nil,
-		))
-	} else {
-		query = eng.Query(logql.NewLiteralParams(
-			q.QueryString,
-			q.Start,
-			q.End,
-			q.Step,
-			q.Interval,
-			q.resultsDirection(),
-			uint32(q.Limit),
-			nil,
-		))
-	}
-
-	// execute the query
-	ctx := user.InjectOrgID(context.Background(), orgID)
-	result, err := query.Exec(ctx)
-	if err != nil {
-		return err
-	}
-
-	if statistics {
-		q.printStats(result.Statistics)
-	}
-
-	value, err := marshal.NewResultValue(result.Data)
-	if err != nil {
-		return err
-	}
-
-	q.printResult(value, out, nil)
-	return nil
 }
 
 // SetInstant makes the Query an instant type

@@ -1,8 +1,0 @@
-*.crt
-*.jks
-*_creds
-*.key
-*.pem
-*.csr
-*.srl
-*.p12

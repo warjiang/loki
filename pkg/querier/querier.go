@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-kit/log/level"
 	"github.com/pkg/errors"
-	"github.com/prometheus/common/model"
 	"github.com/weaveworks/common/httpgrpc"
 	"google.golang.org/grpc/health/grpc_health_v1"
 
@@ -16,7 +15,6 @@ import (
 	"github.com/warjiang/loki/pkg/loghttp"
 	"github.com/warjiang/loki/pkg/logproto"
 	"github.com/warjiang/loki/pkg/logql"
-	"github.com/warjiang/loki/pkg/storage"
 	"github.com/warjiang/loki/pkg/tenant"
 	listutil "github.com/warjiang/loki/pkg/util"
 	"github.com/warjiang/loki/pkg/util/spanlogger"
@@ -83,21 +81,8 @@ type Querier interface {
 // SingleTenantQuerier handles single tenant queries.
 type SingleTenantQuerier struct {
 	cfg             Config
-	store           storage.Store
 	limits          *validation.Overrides
 	ingesterQuerier *IngesterQuerier
-}
-
-// New makes a new Querier.
-func New(cfg Config, store storage.Store, ingesterQuerier *IngesterQuerier, limits *validation.Overrides) (*SingleTenantQuerier, error) {
-	querier := SingleTenantQuerier{
-		cfg:             cfg,
-		store:           store,
-		ingesterQuerier: ingesterQuerier,
-		limits:          limits,
-	}
-
-	return &querier, nil
 }
 
 // Select Implements logql.Querier which select logs via matchers and regex filters.
@@ -108,7 +93,7 @@ func (q *SingleTenantQuerier) SelectLogs(ctx context.Context, params logql.Selec
 		return nil, err
 	}
 
-	ingesterQueryInterval, storeQueryInterval := q.buildQueryIntervals(params.Start, params.End)
+	ingesterQueryInterval, _ := q.buildQueryIntervals(params.Start, params.End)
 
 	iters := []iter.EntryIterator{}
 	if !q.cfg.QueryStoreOnly && ingesterQueryInterval != nil {
@@ -131,19 +116,6 @@ func (q *SingleTenantQuerier) SelectLogs(ctx context.Context, params logql.Selec
 		iters = append(iters, ingesterIters...)
 	}
 
-	if !q.cfg.QueryIngesterOnly && storeQueryInterval != nil {
-		params.Start = storeQueryInterval.start
-		params.End = storeQueryInterval.end
-		level.Debug(spanlogger.FromContext(ctx)).Log(
-			"msg", "querying store",
-			"params", params)
-		storeIter, err := q.store.SelectLogs(ctx, params)
-		if err != nil {
-			return nil, err
-		}
-
-		iters = append(iters, storeIter)
-	}
 	if len(iters) == 1 {
 		return iters[0], nil
 	}
@@ -157,7 +129,7 @@ func (q *SingleTenantQuerier) SelectSamples(ctx context.Context, params logql.Se
 		return nil, err
 	}
 
-	ingesterQueryInterval, storeQueryInterval := q.buildQueryIntervals(params.Start, params.End)
+	ingesterQueryInterval, _ := q.buildQueryIntervals(params.Start, params.End)
 
 	iters := []iter.SampleIterator{}
 	if !q.cfg.QueryStoreOnly && ingesterQueryInterval != nil {
@@ -178,17 +150,6 @@ func (q *SingleTenantQuerier) SelectSamples(ctx context.Context, params logql.Se
 		iters = append(iters, ingesterIters...)
 	}
 
-	if !q.cfg.QueryIngesterOnly && storeQueryInterval != nil {
-		params.Start = storeQueryInterval.start
-		params.End = storeQueryInterval.end
-
-		storeIter, err := q.store.SelectSamples(ctx, params)
-		if err != nil {
-			return nil, err
-		}
-
-		iters = append(iters, storeIter)
-	}
 	return iter.NewMergeSampleIterator(ctx, iters), nil
 }
 
@@ -291,20 +252,6 @@ func (q *SingleTenantQuerier) Label(ctx context.Context, req *logproto.LabelRequ
 	}
 
 	var storeValues []string
-	if !q.cfg.QueryIngesterOnly {
-		from, through := model.TimeFromUnixNano(req.Start.UnixNano()), model.TimeFromUnixNano(req.End.UnixNano())
-		if req.Values {
-			storeValues, err = q.store.LabelValuesForMetricName(ctx, userID, from, through, "logs", req.Name)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			storeValues, err = q.store.LabelNamesForMetricName(ctx, userID, from, through, "logs")
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
 
 	results := append(ingesterValues, storeValues)
 	return &logproto.LabelResponse{
@@ -485,20 +432,8 @@ func (q *SingleTenantQuerier) seriesForMatchers(
 
 // seriesForMatcher fetches series from the store for a given matcher
 func (q *SingleTenantQuerier) seriesForMatcher(ctx context.Context, from, through time.Time, matcher string, shards []string) ([]logproto.SeriesIdentifier, error) {
-	ids, err := q.store.GetSeries(ctx, logql.SelectLogParams{
-		QueryRequest: &logproto.QueryRequest{
-			Selector:  matcher,
-			Limit:     1,
-			Start:     from,
-			End:       through,
-			Direction: logproto.FORWARD,
-			Shards:    shards,
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-	return ids, nil
+
+	return nil, nil
 }
 
 func (q *SingleTenantQuerier) validateQueryRequest(ctx context.Context, req logql.QueryParams) (time.Time, time.Time, error) {
