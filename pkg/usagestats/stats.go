@@ -93,7 +93,6 @@ func buildReport(seed *ClusterSeed, interval time.Time) Report {
 		PrometheusVersion: build.GetVersion(),
 		CreatedAt:         seed.CreatedAt,
 		Interval:          interval,
-		IntervalPeriod:    reportInterval.Seconds(),
 		Os:                runtime.GOOS,
 		Arch:              runtime.GOARCH,
 		Target:            targetName,
